@@ -1,0 +1,6060 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#ed3343">
+<title>My Catches – Hoekedex</title>
+
+<style>
+:root{
+  --bg:#fff5f6;
+  --surface:#fff;
+  --surface-soft:#fffafb;
+  --text:#22202a;
+  --muted:#726c79;
+  --border:#f0dde0;
+  --red:#ed3343;
+  --red-dark:#c91d2b;
+  --pink:#ffeff2;
+  --purple:#6d5dfc;
+  --gold:#f4a621;
+  --silver:#8d98a8;
+  --bronze:#a96939;
+  --platinum:#388da0;
+  --green:#168556;
+  --green-soft:#e5f8ee;
+  --rose-soft:#fff0f1;
+  --legendary:#aa6a00;
+  --legendary-soft:#fff1cc;
+  --shadow:0 14px 34px rgba(126,32,45,.10);
+  --radius:20px;
+}
+
+*{
+  box-sizing:border-box;
+}
+
+body{
+  margin:0;
+  min-width:320px;
+  background:
+    radial-gradient(
+      circle at 0 0,
+      rgba(255,222,227,.82),
+      transparent 28rem
+    ),
+    linear-gradient(
+      180deg,
+      #fffafa 0%,
+      var(--bg) 60%,
+      #fff 100%
+    );
+  color:var(--text);
+  font-family:
+    Inter,
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+  line-height:1.45;
+}
+
+button,
+input,
+select,
+textarea{
+  font:inherit;
+}
+
+button{
+  cursor:pointer;
+}
+
+.container{
+  width:min(1160px,calc(100% - 40px));
+  margin:auto;
+}
+
+
+/* ============================================================
+   HEADER
+============================================================ */
+
+header{
+  position:sticky;
+  top:0;
+  z-index:30;
+  border-bottom:1px solid rgba(240,221,224,.9);
+  background:rgba(255,250,250,.88);
+  backdrop-filter:blur(14px);
+}
+
+.nav{
+  min-height:70px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:20px;
+}
+
+.logo{
+  color:var(--red);
+  font-size:1.35rem;
+  font-weight:900;
+  letter-spacing:-.7px;
+  text-decoration:none;
+}
+
+.logo span{
+  color:var(--purple);
+}
+
+.nav-links{
+  display:flex;
+  gap:8px;
+  margin:0;
+  padding:0;
+  list-style:none;
+}
+
+.nav-links a{
+  display:inline-flex;
+  padding:9px 11px;
+  border-radius:10px;
+  color:var(--muted);
+  font-size:.92rem;
+  font-weight:700;
+  text-decoration:none;
+}
+
+.nav-links a:hover,
+.nav-links a[aria-current="page"]{
+  background:var(--pink);
+  color:var(--red-dark);
+}
+
+
+/* ============================================================
+   GENERAL
+============================================================ */
+
+main{
+  padding:30px 0 60px;
+}
+
+h1,
+h2,
+h3,
+p{
+  margin-top:0;
+}
+
+.page-heading{
+  display:flex;
+  align-items:end;
+  justify-content:space-between;
+  gap:18px;
+  margin-bottom:20px;
+}
+
+.eyebrow{
+  margin:0 0 5px;
+  color:var(--red);
+  font-size:.78rem;
+  font-weight:900;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+}
+
+h1{
+  margin-bottom:4px;
+  font-size:clamp(1.75rem,3vw,2.25rem);
+  letter-spacing:-.9px;
+}
+
+.page-heading p:last-child{
+  margin-bottom:0;
+  color:var(--muted);
+}
+
+.button{
+  display:inline-flex;
+  min-height:42px;
+  align-items:center;
+  justify-content:center;
+  padding:10px 14px;
+  border:1px solid transparent;
+  border-radius:12px;
+  background:var(--red);
+  box-shadow:0 8px 18px rgba(206,30,44,.22);
+  color:#fff;
+  font-size:.9rem;
+  font-weight:800;
+  text-decoration:none;
+}
+
+.button:hover{
+  background:var(--red-dark);
+}
+
+.button.secondary{
+  border-color:var(--border);
+  background:#fff;
+  box-shadow:none;
+  color:var(--text);
+}
+
+.button.secondary:hover{
+  background:var(--pink);
+}
+
+.button.gold{
+  background:var(--gold);
+  color:#fff;
+  box-shadow:0 8px 18px rgba(244,166,33,.2);
+}
+
+
+/* ============================================================
+   SEARCH / FILTER
+============================================================ */
+
+.controls{
+  display:grid;
+  grid-template-columns:minmax(220px,1fr) auto;
+  gap:12px;
+  margin-bottom:17px;
+}
+
+.search{
+  width:100%;
+  min-height:44px;
+  padding:10px 13px;
+  border:1px solid var(--border);
+  border-radius:12px;
+  outline:none;
+  background:#fff;
+  color:var(--text);
+}
+
+.search:focus,
+.field input:focus,
+.field select:focus,
+.field textarea:focus{
+  border-color:var(--purple);
+  box-shadow:0 0 0 4px rgba(109,93,252,.10);
+}
+
+.filter{
+  min-height:42px;
+  padding:8px 10px;
+  border:1px solid var(--border);
+  border-radius:10px;
+  background:#fff;
+  color:var(--text);
+}
+
+
+/* ============================================================
+   CATCH CARDS
+============================================================ */
+
+.catches-grid{
+  display:grid;
+  grid-template-columns:
+    repeat(auto-fill,minmax(190px,1fr));
+  gap:14px;
+}
+
+.catch-card{
+  overflow:hidden;
+  border:1px solid var(--border);
+  border-radius:17px;
+  background:#fff;
+  box-shadow:var(--shadow);
+  color:inherit;
+  text-decoration:none;
+  transition:.15s ease;
+}
+
+.catch-card:hover{
+  border-color:rgba(237,51,67,.46);
+  box-shadow:
+    0 18px 35px rgba(126,32,45,.14);
+  transform:translateY(-3px);
+}
+
+.card-image,
+.profile-photo{
+  display:grid;
+  place-items:center;
+  background:
+    linear-gradient(
+      135deg,
+      #ffe4e9,
+      #f1e8ff
+    );
+  color:#9b8190;
+  font-size:.84rem;
+  font-weight:800;
+}
+
+.card-image{
+  min-height:185px;
+}
+
+.card-body{
+  padding:13px;
+}
+
+.card-title-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+}
+
+.card-title{
+  overflow:hidden;
+  font-size:1rem;
+  font-weight:900;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
+.card-meta{
+  display:flex;
+  justify-content:space-between;
+  gap:8px;
+  margin-top:7px;
+  color:var(--muted);
+  font-size:.78rem;
+}
+
+.stars{
+  color:var(--gold);
+  letter-spacing:-1px;
+}
+
+.tier-chip{
+  display:inline-flex;
+  align-items:center;
+  padding:4px 7px;
+  border-radius:999px;
+  font-size:.65rem;
+  font-weight:900;
+  letter-spacing:.04em;
+  white-space:nowrap;
+}
+
+.tier-common{
+  background:#f0f2f5;
+  color:#667085;
+}
+
+.tier-rare{
+  background:#e6f8ee;
+  color:#148354;
+}
+
+.tier-ultra{
+  background:#f0ebff;
+  color:#6547cf;
+}
+
+.tier-legendary{
+  background:var(--legendary-soft);
+  color:var(--legendary);
+}
+
+.legendary-mini{
+  margin-top:7px;
+  color:var(--legendary);
+  font-size:.72rem;
+  font-weight:800;
+}
+
+
+/* ============================================================
+   PROFILE
+============================================================ */
+
+#profileView{
+  display:none;
+}
+
+#profileView.is-open{
+  display:block;
+}
+
+#listView.is-hidden{
+  display:none;
+}
+
+.back-link{
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  margin-bottom:16px;
+  padding:0;
+  border:0;
+  background:transparent;
+  color:var(--red-dark);
+  font-size:.9rem;
+  font-weight:800;
+}
+
+
+/* Main profile layout */
+
+.profile-layout{
+  display:grid;
+  grid-template-columns:
+    minmax(280px,.85fr)
+    minmax(0,1.15fr);
+  gap:18px;
+}
+
+.profile-panel{
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  background:#fff;
+  box-shadow:var(--shadow);
+}
+
+
+/* ============================================================
+   PROFILE HERO
+============================================================ */
+
+.profile-hero{
+  overflow:hidden;
+}
+
+.profile-photo{
+  position:relative;
+  min-height:300px;
+}
+
+
+/*
+ * PLUS BUTTON
+ *
+ * This is deliberately positioned in the
+ * top-right of the photo/name profile box.
+ */
+
+.profile-add-button{
+  position:absolute;
+  top:14px;
+  right:14px;
+  z-index:5;
+
+  display:grid;
+  width:42px;
+  height:42px;
+  place-items:center;
+
+  border:1px solid rgba(255,255,255,.7);
+  border-radius:50%;
+
+  background:rgba(255,255,255,.94);
+  box-shadow:
+    0 7px 18px rgba(80,30,40,.18);
+
+  color:var(--red);
+  font-size:1.55rem;
+  font-weight:500;
+  line-height:1;
+
+  transition:.15s ease;
+}
+
+.profile-add-button:hover{
+  background:var(--red);
+  color:#fff;
+  transform:scale(1.06);
+}
+
+.profile-add-button:active{
+  transform:scale(.96);
+}
+
+
+.profile-main{
+  position:relative;
+  padding:20px;
+}
+
+.profile-name-row{
+  display:flex;
+  align-items:start;
+  justify-content:space-between;
+  gap:15px;
+}
+
+.profile-main h1{
+  margin-bottom:5px;
+}
+
+.profile-id{
+  margin-bottom:16px;
+  color:var(--muted);
+  font-size:.83rem;
+}
+
+
+/* ============================================================
+   TIER
+============================================================ */
+
+.tier-feature{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:12px;
+  border:1px solid #f1e4e6;
+  border-radius:14px;
+  background:var(--surface-soft);
+}
+
+.tier-feature small,
+.rating-block small{
+  display:block;
+  margin-bottom:2px;
+  color:var(--muted);
+  font-size:.72rem;
+  font-weight:700;
+}
+
+.tier-feature strong{
+  font-size:1rem;
+}
+
+
+/* ============================================================
+   LEGENDARY PROFILE
+============================================================ */
+
+.legendary-profile{
+  display:grid;
+  gap:4px;
+  margin-top:10px;
+  padding:13px;
+  border:1px solid rgba(244,166,33,.35);
+  border-radius:14px;
+  background:
+    linear-gradient(
+      135deg,
+      #fff8e7,
+      #fff1cc
+    );
+}
+
+.legendary-profile-label{
+  color:var(--legendary);
+  font-size:.68rem;
+  font-weight:900;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+}
+
+.legendary-profile-name{
+  color:#7d5100;
+  font-size:.95rem;
+  font-weight:900;
+}
+
+
+/* ============================================================
+   RATING
+============================================================ */
+
+.rating-block{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:16px 0 4px;
+}
+
+.rating-stars{
+  margin-top:3px;
+  color:var(--gold);
+  font-size:1.45rem;
+}
+
+.rating-value{
+  font-size:1.3rem;
+  font-weight:900;
+}
+
+
+/* ============================================================
+   PROFILE DETAILS
+============================================================ */
+
+.details-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:9px;
+  margin-top:16px;
+}
+
+.detail{
+  padding:11px;
+  border:1px solid #f1e4e6;
+  border-radius:12px;
+  background:var(--surface-soft);
+}
+
+.detail span{
+  display:block;
+  margin-bottom:2px;
+  color:var(--muted);
+  font-size:.7rem;
+  font-weight:700;
+}
+
+.detail strong{
+  font-size:.88rem;
+}
+
+
+/* ============================================================
+   RIGHT SIDE
+============================================================ */
+
+.quick-stack{
+  display:grid;
+  gap:18px;
+}
+
+.section-panel{
+  padding:20px;
+}
+
+.section-heading{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:14px;
+}
+
+.section-heading h2{
+  margin:0;
+  font-size:1.15rem;
+}
+
+.section-heading span{
+  color:var(--muted);
+  font-size:.8rem;
+  font-weight:700;
+}
+
+
+/* ============================================================
+   EVOLUTION
+============================================================ */
+
+.evolution-current{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+  padding:15px;
+  border:1px solid rgba(56,141,160,.25);
+  border-radius:16px;
+  background:
+    linear-gradient(
+      135deg,
+      #e8f7f9,
+      #f2fbfc
+    );
+}
+
+.evo-title{
+  display:flex;
+  align-items:center;
+  gap:11px;
+}
+
+.evo-medal{
+  display:grid;
+  width:47px;
+  height:47px;
+  place-items:center;
+  border-radius:50%;
+  background:var(--platinum);
+  color:white;
+  font-size:1.35rem;
+}
+
+.evo-title h3{
+  margin:0;
+  font-size:1.02rem;
+}
+
+.evo-title p{
+  margin:2px 0 0;
+  color:var(--muted);
+  font-size:.78rem;
+}
+
+.evo-count{
+  text-align:right;
+}
+
+.evo-count strong{
+  display:block;
+  font-size:1.25rem;
+}
+
+.evo-count span{
+  color:var(--muted);
+  font-size:.72rem;
+}
+
+.evolution-track{
+  position:relative;
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:4px;
+  margin-top:22px;
+}
+
+.evolution-track:before{
+  content:"";
+  position:absolute;
+  top:21px;
+  left:12%;
+  right:12%;
+  height:4px;
+  background:#e9e8ec;
+}
+
+.evolution-track:after{
+  content:"";
+  position:absolute;
+  top:21px;
+  left:12%;
+  width:var(--evolution-progress,0%);
+  height:4px;
+  background:
+    linear-gradient(
+      90deg,
+      var(--bronze),
+      var(--silver),
+      var(--gold),
+      var(--platinum)
+    );
+}
+
+.evolution-step{
+  position:relative;
+  z-index:1;
+  display:grid;
+  justify-items:center;
+  gap:6px;
+  text-align:center;
+}
+
+.step-dot{
+  display:grid;
+  width:46px;
+  height:46px;
+  place-items:center;
+  border:3px solid white;
+  border-radius:50%;
+  box-shadow:0 0 0 1px #e3e4e8;
+  color:white;
+  font-size:.92rem;
+  font-weight:900;
+}
+
+.step-dot.bronze{
+  background:var(--bronze);
+}
+
+.step-dot.silver{
+  background:var(--silver);
+}
+
+.step-dot.gold{
+  background:var(--gold);
+}
+
+.step-dot.platinum{
+  background:var(--platinum);
+}
+
+.evolution-step strong{
+  font-size:.78rem;
+}
+
+.evolution-step span{
+  color:var(--muted);
+  font-size:.67rem;
+}
+
+
+/* ============================================================
+   BADGES
+============================================================ */
+
+.badge-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:9px;
+}
+
+.badge{
+  display:grid;
+  min-height:96px;
+  place-items:center;
+  padding:9px;
+  border:1px solid #f0e4e6;
+  border-radius:13px;
+  background:var(--surface-soft);
+  text-align:center;
+}
+
+.badge-icon{
+  display:grid;
+  width:35px;
+  height:35px;
+  place-items:center;
+  border-radius:10px;
+  background:#ffedf0;
+  color:var(--red);
+}
+
+.badge strong{
+  margin-top:5px;
+  font-size:.68rem;
+  line-height:1.12;
+}
+
+.badge small{
+  color:var(--muted);
+  font-size:.61rem;
+}
+
+.badge.locked{
+  filter:grayscale(1);
+  opacity:.48;
+}
+
+.badge.legendary-badge{
+  border-color:rgba(244,166,33,.35);
+  background:#fff9eb;
+}
+
+.badge.legendary-badge .badge-icon{
+  background:#fff0c9;
+  color:var(--legendary);
+}
+
+
+/* ============================================================
+   ENCOUNTER LOG
+============================================================ */
+
+.encounter-log{
+  display:grid;
+  gap:9px;
+}
+
+.encounter{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:14px;
+  padding:12px;
+  border:1px solid #f1e4e6;
+  border-radius:12px;
+  background:var(--surface-soft);
+}
+
+.encounter-left{
+  min-width:0;
+}
+
+.encounter-date{
+  font-size:.9rem;
+  font-weight:900;
+}
+
+.encounter-meta{
+  margin-top:2px;
+  color:var(--muted);
+  font-size:.74rem;
+}
+
+.encounter-badges{
+  display:flex;
+  flex-wrap:wrap;
+  gap:5px;
+  margin-top:8px;
+}
+
+.encounter-badge{
+  display:inline-flex;
+  padding:4px 7px;
+  border-radius:999px;
+  background:#f0ebff;
+  color:#6547cf;
+  font-size:.62rem;
+  font-weight:800;
+}
+
+.encounter-legendary{
+  display:inline-flex;
+  margin-top:7px;
+  padding:5px 8px;
+  border-radius:999px;
+  background:var(--legendary-soft);
+  color:var(--legendary);
+  font-size:.64rem;
+  font-weight:900;
+}
+
+.encounter-right{
+  display:flex;
+  align-items:flex-end;
+  flex-direction:column;
+  gap:5px;
+  text-align:right;
+}
+
+.encounter-rating{
+  color:var(--gold);
+  font-size:.9rem;
+  white-space:nowrap;
+}
+
+.encounter-number{
+  color:var(--purple);
+  font-size:.77rem;
+  font-weight:900;
+}
+
+.protection-badge{
+  display:inline-flex;
+  align-items:center;
+  padding:4px 8px;
+  border-radius:999px;
+  font-size:.65rem;
+  font-weight:900;
+  line-height:1;
+}
+
+.protection-used{
+  background:var(--green-soft);
+  color:var(--green);
+}
+
+.protection-not-used{
+  background:var(--rose-soft);
+  color:var(--red-dark);
+}
+
+.protection-unknown{
+  background:#f0f2f5;
+  color:#667085;
+}
+
+
+/* ============================================================
+   MODALS
+============================================================ */
+
+.modal-backdrop{
+  position:fixed;
+  z-index:100;
+  inset:0;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:18px;
+  overflow-y:auto;
+  background:rgba(42,23,31,.48);
+  backdrop-filter:blur(4px);
+}
+
+.modal-backdrop.is-open{
+  display:flex;
+}
+
+.modal{
+  width:min(700px,100%);
+  max-height:min(860px,calc(100vh - 36px));
+  overflow-y:auto;
+  border:1px solid var(--border);
+  border-radius:22px;
+  background:#fff;
+  box-shadow:
+    0 22px 70px rgba(63,20,30,.30);
+}
+
+.modal-header{
+  position:sticky;
+  top:0;
+  z-index:1;
+  display:flex;
+  align-items:start;
+  justify-content:space-between;
+  gap:15px;
+  padding:20px 21px 16px;
+  border-bottom:1px solid var(--border);
+  background:rgba(255,255,255,.94);
+  backdrop-filter:blur(12px);
+}
+
+.modal-header h2{
+  margin:0 0 3px;
+  font-size:1.3rem;
+}
+
+.modal-header p{
+  margin:0;
+  color:var(--muted);
+  font-size:.82rem;
+}
+
+.close-button{
+  display:grid;
+  width:35px;
+  height:35px;
+  place-items:center;
+  border:1px solid var(--border);
+  border-radius:10px;
+  background:#fff;
+  color:var(--muted);
+  font-size:1.3rem;
+}
+
+.catch-form{
+  padding:21px;
+}
+
+.form-section{
+  padding-bottom:19px;
+  margin-bottom:19px;
+  border-bottom:1px solid #f3e7e9;
+}
+
+.form-section:last-of-type{
+  padding-bottom:0;
+  margin-bottom:0;
+  border-bottom:0;
+}
+
+.form-section h3{
+  margin-bottom:12px;
+  font-size:1rem;
+}
+
+.form-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:12px;
+}
+
+.form-grid.three{
+  grid-template-columns:repeat(3,1fr);
+}
+
+.field{
+  display:grid;
+  gap:6px;
+}
+
+.field.full{
+  grid-column:1/-1;
+}
+
+.field label{
+  color:var(--text);
+  font-size:.8rem;
+  font-weight:800;
+}
+
+.optional{
+  color:var(--muted);
+  font-weight:600;
+}
+
+.field input,
+.field select,
+.field textarea{
+  width:100%;
+  min-height:43px;
+  padding:9px 10px;
+  border:1px solid var(--border);
+  border-radius:11px;
+  outline:none;
+  background:#fff;
+  color:var(--text);
+}
+
+.field textarea{
+  min-height:84px;
+  resize:vertical;
+}
+
+.field-note{
+  margin:0;
+  color:var(--muted);
+  font-size:.72rem;
+}
+
+
+/* ============================================================
+   HAIR
+============================================================ */
+
+.hair-options{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:8px;
+}
+
+.hair-option,
+.badge-choice,
+.legendary-choice,
+.choice{
+  position:relative;
+}
+
+.hair-option input,
+.badge-choice input,
+.legendary-choice input,
+.choice input{
+  position:absolute;
+  opacity:0;
+  pointer-events:none;
+}
+
+.hair-option label{
+  display:grid;
+  min-height:70px;
+  place-items:center;
+  gap:5px;
+  padding:7px 4px;
+  border:1px solid var(--border);
+  border-radius:13px;
+  background:var(--surface-soft);
+  color:var(--muted);
+  cursor:pointer;
+  font-size:.7rem;
+  font-weight:800;
+  text-align:center;
+}
+
+.hair-option input:checked+label{
+  border-color:var(--purple);
+  background:#f4f1ff;
+  color:var(--purple);
+}
+
+.hair-swatch{
+  display:block;
+  width:26px;
+  height:26px;
+  border:2px solid white;
+  border-radius:50%;
+  box-shadow:
+    0 0 0 1px rgba(40,30,35,.15);
+}
+
+.swatch-blonde{
+  background:#e9ca74;
+}
+
+.swatch-brunette{
+  background:#70442d;
+}
+
+.swatch-redhead{
+  background:#b84d2f;
+}
+
+.swatch-black{
+  background:#222027;
+}
+
+.swatch-other{
+  background:
+    linear-gradient(
+      135deg,
+      #c6a3e4,
+      #70c7d6
+    );
+}
+
+
+/* ============================================================
+   BADGE PICKER
+============================================================ */
+
+.badge-picker{
+  display:grid;
+  grid-template-columns:
+    repeat(3,minmax(0,1fr));
+  gap:8px;
+  max-height:320px;
+  overflow-y:auto;
+  padding:2px;
+}
+
+.badge-choice label{
+  display:flex;
+  min-height:42px;
+  align-items:center;
+  justify-content:center;
+  padding:7px 8px;
+  border:1px solid var(--border);
+  border-radius:10px;
+  background:var(--surface-soft);
+  color:var(--muted);
+  cursor:pointer;
+  font-size:.7rem;
+  font-weight:800;
+  text-align:center;
+}
+
+.badge-choice input:checked+label{
+  border-color:var(--red);
+  background:var(--pink);
+  color:var(--red-dark);
+}
+
+
+/* ============================================================
+   LEGENDARY PICKER
+============================================================ */
+
+.legendary-field{
+  padding:13px;
+  border:1px solid rgba(244,166,33,.32);
+  border-radius:14px;
+  background:
+    linear-gradient(
+      135deg,
+      #fffaf0,
+      #fff5dc
+    );
+}
+
+.legendary-field label{
+  color:#7d5100;
+}
+
+.legendary-note{
+  margin:7px 0 0;
+  color:#8b6a2b;
+  font-size:.72rem;
+}
+
+.legendary-picker{
+  display:grid;
+  gap:8px;
+}
+
+.legendary-choice label{
+  display:flex;
+  min-height:43px;
+  align-items:center;
+  padding:9px 11px;
+  border:1px solid rgba(244,166,33,.28);
+  border-radius:11px;
+  background:#fffdf7;
+  color:#8b6a2b;
+  cursor:pointer;
+  font-size:.74rem;
+  font-weight:800;
+}
+
+.legendary-choice input:checked+label{
+  border-color:var(--gold);
+  background:var(--legendary-soft);
+  color:#7d5100;
+}
+
+
+/* ============================================================
+   AUTO TIER
+============================================================ */
+
+.auto-tier-preview{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-top:12px;
+  padding:11px 12px;
+  border:1px solid #eee4e7;
+  border-radius:12px;
+  background:#fff;
+}
+
+.auto-tier-preview span{
+  color:var(--muted);
+  font-size:.76rem;
+  font-weight:700;
+}
+
+
+/* ============================================================
+   PROTECTION
+============================================================ */
+
+.choice-row{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+}
+
+.choice label{
+  display:inline-flex;
+  min-height:40px;
+  align-items:center;
+  justify-content:center;
+  padding:8px 11px;
+  border:1px solid var(--border);
+  border-radius:999px;
+  background:#fff;
+  color:var(--muted);
+  cursor:pointer;
+  font-size:.78rem;
+  font-weight:800;
+}
+
+.choice input:checked+label{
+  border-color:var(--red);
+  background:var(--pink);
+  color:var(--red-dark);
+}
+
+
+/* ============================================================
+   ERRORS / FOOTER
+============================================================ */
+
+.form-error{
+  display:none;
+  margin:0 0 13px;
+  padding:10px 12px;
+  border-radius:11px;
+  background:var(--rose-soft);
+  color:var(--red-dark);
+  font-size:.82rem;
+  font-weight:700;
+}
+
+.form-error.is-visible{
+  display:block;
+}
+
+.modal-footer{
+  display:flex;
+  justify-content:flex-end;
+  gap:9px;
+  padding:16px 21px 20px;
+}
+
+.empty-state{
+  padding:35px;
+  border:1px dashed var(--border);
+  border-radius:16px;
+  color:var(--muted);
+  text-align:center;
+}
+
+footer{
+  padding:22px 0 38px;
+  color:var(--muted);
+  font-size:.85rem;
+  text-align:center;
+}
+
+
+/* ============================================================
+   MOBILE
+============================================================ */
+
+@media(max-width:860px){
+
+  .profile-layout{
+    grid-template-columns:1fr;
+  }
+
+  .profile-photo{
+    min-height:220px;
+  }
+
+}
+
+
+@media(max-width:700px){
+
+  .container{
+    width:min(100% - 28px,1160px);
+  }
+
+  .nav{
+    min-height:62px;
+  }
+
+  .nav-links{
+    max-width:70vw;
+    overflow-x:auto;
+  }
+
+  .nav-links a{
+    padding:8px;
+  }
+
+  main{
+    padding-top:22px;
+  }
+
+  .page-heading{
+    align-items:start;
+    flex-direction:column;
+  }
+
+  .controls{
+    grid-template-columns:1fr;
+  }
+
+  .catches-grid{
+    grid-template-columns:
+      repeat(2,minmax(0,1fr));
+    gap:11px;
+  }
+
+  .card-image{
+    min-height:158px;
+  }
+
+  .card-title-row{
+    align-items:start;
+    flex-direction:column;
+  }
+
+  .section-panel,
+  .profile-main{
+    padding:17px;
+  }
+
+  .badge-grid{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .badge-picker{
+    grid-template-columns:
+      repeat(2,minmax(0,1fr));
+  }
+
+  .form-grid,
+  .form-grid.three{
+    grid-template-columns:1fr;
+  }
+
+  .hair-options{
+    grid-template-columns:repeat(3,1fr);
+  }
+
+}
+
+
+@media(max-width:430px){
+
+  .nav-links a{
+    font-size:.8rem;
+  }
+
+  .details-grid{
+    grid-template-columns:1fr;
+  }
+
+  .evolution-current{
+    align-items:start;
+    flex-direction:column;
+  }
+
+  .evo-count{
+    text-align:left;
+  }
+
+  .encounter{
+    gap:8px;
+  }
+
+  .modal-backdrop{
+    padding:0;
+    align-items:end;
+  }
+
+  .modal{
+    max-height:92vh;
+    border-radius:22px 22px 0 0;
+  }
+
+  .hair-options{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .badge-picker{
+    grid-template-columns:1fr 1fr;
+  }
+
+}
+</style>
+</head>
+
+
+<body>
+
+<header>
+
+  <div class="container nav">
+
+    <a class="logo" href="index.html">
+      Hoe<span>k</span>edex
+    </a>
+
+    <nav aria-label="Main navigation">
+
+      <ul class="nav-links">
+
+        <li>
+          <a href="index.html">
+            Home
+          </a>
+        </li>
+
+        <li>
+          <a
+            href="catches.html"
+            aria-current="page"
+          >
+            Catches
+          </a>
+        </li>
+
+        <li>
+          <a href="map.html">
+            Map
+          </a>
+        </li>
+
+        <li>
+          <a href="stats.html">
+            Stats
+          </a>
+        </li>
+
+        <li>
+          <a href="tiers.html">
+            Tiers
+          </a>
+        </li>
+
+      </ul>
+
+    </nav>
+
+  </div>
+
+</header>
+
+
+<main class="container">
+
+
+<!-- ==========================================================
+     CATCH LIST
+=========================================================== -->
+
+<section id="listView">
+
+  <div class="page-heading">
+
+    <div>
+
+      <p class="eyebrow">
+        Collection
+      </p>
+
+      <h1>
+        My catches
+      </h1>
+
+      <p>
+        Open a profile to view badges, tier,
+        evolution and encounter history.
+      </p>
+
+    </div>
+
+
+    <button
+      class="button"
+      id="addCatchButton"
+      type="button"
+    >
+      + Add a catch
+    </button>
+
+  </div>
+
+
+  <div class="controls">
+
+    <input
+      class="search"
+      id="searchInput"
+      type="search"
+      placeholder="Search catches..."
+      aria-label="Search catches"
+    >
+
+
+    <select
+      class="filter"
+      id="tierFilter"
+      aria-label="Filter by tier"
+    >
+
+      <option value="">
+        All tiers
+      </option>
+
+      <option value="common">
+        Common
+      </option>
+
+      <option value="rare">
+        Rare
+      </option>
+
+      <option value="ultra">
+        Ultra Rare
+      </option>
+
+      <option value="legendary">
+        Legendary
+      </option>
+
+    </select>
+
+  </div>
+
+
+  <div
+    class="catches-grid"
+    id="catchesGrid"
+  ></div>
+
+</section>
+
+
+
+<!-- ==========================================================
+     PROFILE
+=========================================================== -->
+
+<section id="profileView">
+
+  <button
+    class="back-link"
+    id="backToCatches"
+    type="button"
+  >
+    ← Back to catches
+  </button>
+
+
+  <div id="profileContent"></div>
+
+</section>
+
+</main>
+
+
+
+<!-- ==========================================================
+     ADD CATCH MODAL
+=========================================================== -->
+
+<div
+  class="modal-backdrop"
+  id="addCatchModal"
+  aria-hidden="true"
+>
+
+<section
+  class="modal"
+  role="dialog"
+  aria-modal="true"
+>
+
+  <div class="modal-header">
+
+    <div>
+
+      <h2>
+        Add a catch
+      </h2>
+
+      <p>
+        Add the person and their first encounter.
+      </p>
+
+    </div>
+
+
+    <button
+      class="close-button"
+      id="closeModalButton"
+      type="button"
+    >
+      ×
+    </button>
+
+  </div>
+
+
+  <form
+    class="catch-form"
+    id="addCatchForm"
+  >
+
+    <p
+      class="form-error"
+      id="formError"
+    ></p>
+
+
+    <!-- IDENTITY -->
+
+    <section class="form-section">
+
+      <h3>
+        Identity
+      </h3>
+
+
+      <div class="form-grid three">
+
+        <div class="field">
+
+          <label for="firstName">
+            First name
+          </label>
+
+          <input
+            id="firstName"
+            name="firstName"
+            type="text"
+            maxlength="40"
+            required
+          >
+
+        </div>
+
+
+        <div class="field">
+
+          <label for="lastInitial">
+            Last initial
+            <span class="optional">
+              optional
+            </span>
+          </label>
+
+          <input
+            id="lastInitial"
+            name="lastInitial"
+            type="text"
+            maxlength="1"
+          >
+
+        </div>
+
+
+        <div class="field">
+
+          <label for="nickname">
+            Nickname
+            <span class="optional">
+              optional
+            </span>
+          </label>
+
+          <input
+            id="nickname"
+            name="nickname"
+            type="text"
+            maxlength="40"
+          >
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+
+    <!-- APPEARANCE -->
+
+    <section class="form-section">
+
+      <h3>
+        Appearance & background
+      </h3>
+
+
+      <div class="field">
+
+        <label>
+          Hair colour
+        </label>
+
+
+        <div class="hair-options">
+
+          <div class="hair-option">
+
+            <input
+              id="hairBlonde"
+              type="radio"
+              name="hair"
+              value="Blonde"
+              required
+            >
+
+            <label for="hairBlonde">
+
+              <span
+                class="hair-swatch swatch-blonde"
+              ></span>
+
+              Blonde
+
+            </label>
+
+          </div>
+
+
+          <div class="hair-option">
+
+            <input
+              id="hairBrunette"
+              type="radio"
+              name="hair"
+              value="Brunette"
+            >
+
+            <label for="hairBrunette">
+
+              <span
+                class="hair-swatch swatch-brunette"
+              ></span>
+
+              Brunette
+
+            </label>
+
+          </div>
+
+
+          <div class="hair-option">
+
+            <input
+              id="hairRedhead"
+              type="radio"
+              name="hair"
+              value="Redhead"
+            >
+
+            <label for="hairRedhead">
+
+              <span
+                class="hair-swatch swatch-redhead"
+              ></span>
+
+              Redhead
+
+            </label>
+
+          </div>
+
+
+          <div class="hair-option">
+
+            <input
+              id="hairBlack"
+              type="radio"
+              name="hair"
+              value="Black"
+            >
+
+            <label for="hairBlack">
+
+              <span
+                class="hair-swatch swatch-black"
+              ></span>
+
+              Black
+
+            </label>
+
+          </div>
+
+
+          <div class="hair-option">
+
+            <input
+              id="hairOther"
+              type="radio"
+              name="hair"
+              value="Other"
+            >
+
+            <label for="hairOther">
+
+              <span
+                class="hair-swatch swatch-other"
+              ></span>
+
+              Other
+
+            </label>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <div
+        class="form-grid"
+        style="margin-top:14px"
+      >
+
+        <div class="field">
+
+          <label for="race">
+            Race
+            <span class="optional">
+              optional
+            </span>
+          </label>
+
+          <select
+            id="race"
+            name="race"
+          >
+
+            <option value="">
+              Prefer not to log
+            </option>
+
+            <option value="Asian">
+              Asian
+            </option>
+
+            <option value="Black">
+              Black
+            </option>
+
+            <option value="Latina">
+              Latina
+            </option>
+
+            <option value="Middle Eastern">
+              Middle Eastern
+            </option>
+
+            <option value="Mixed">
+              Mixed
+            </option>
+
+            <option value="South Asian">
+              South Asian
+            </option>
+
+            <option value="White">
+              White
+            </option>
+
+            <option value="Other">
+              Other
+            </option>
+
+          </select>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+
+    <!-- BADGES -->
+
+    <section class="form-section">
+
+      <h3>
+        Badges
+      </h3>
+
+      <p class="field-note">
+        Select every badge that applies to the catch.
+        The highest-rated badge determines the tier.
+      </p>
+
+
+      <div
+        class="badge-picker"
+        id="newCatchBadgePicker"
+      ></div>
+
+
+      <div class="auto-tier-preview">
+
+        <span>
+          Automatically calculated tier
+        </span>
+
+        <strong
+          id="autoTierValue"
+          class="tier-chip tier-common"
+        >
+          Common
+        </strong>
+
+      </div>
+
+    </section>
+
+
+
+    <!-- FIRST ENCOUNTER -->
+
+    <section class="form-section">
+
+      <h3>
+        First encounter
+      </h3>
+
+
+      <div class="form-grid three">
+
+        <div class="field">
+
+          <label for="encounterDate">
+            Date
+          </label>
+
+          <input
+            id="encounterDate"
+            name="encounterDate"
+            type="date"
+            required
+          >
+
+        </div>
+
+
+        <div class="field">
+
+          <label for="encounterLocation">
+            Location
+            <span class="optional">
+              optional
+            </span>
+          </label>
+
+          <input
+            id="encounterLocation"
+            name="encounterLocation"
+            type="text"
+          >
+
+        </div>
+
+
+        <div class="field">
+
+          <label for="encounterRating">
+            Encounter rating
+          </label>
+
+          <select
+            id="encounterRating"
+            name="encounterRating"
+          >
+
+            <option value="1">
+              1★
+            </option>
+
+            <option value="2">
+              2★
+            </option>
+
+            <option
+              value="3"
+              selected
+            >
+              3★
+            </option>
+
+            <option value="4">
+              4★
+            </option>
+
+            <option value="5">
+              5★
+            </option>
+
+          </select>
+
+        </div>
+
+      </div>
+
+
+      <div
+        class="field"
+        style="margin-top:14px"
+      >
+
+        <label>
+          Protection
+        </label>
+
+
+        <div class="choice-row">
+
+          <div class="choice">
+
+            <input
+              id="protected"
+              type="radio"
+              name="protection"
+              value="protected"
+              required
+            >
+
+            <label for="protected">
+              Protected 🛡️
+            </label>
+
+          </div>
+
+
+          <div class="choice">
+
+            <input
+              id="unprotected"
+              type="radio"
+              name="protection"
+              value="unprotected"
+            >
+
+            <label for="unprotected">
+              Unprotected ⚠️
+            </label>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <div
+        class="field"
+        style="margin-top:14px"
+      >
+
+        <label for="notes">
+          Private notes
+          <span class="optional">
+            optional
+          </span>
+        </label>
+
+        <textarea
+          id="notes"
+          name="notes"
+          maxlength="500"
+        ></textarea>
+
+      </div>
+
+    </section>
+
+
+
+    <!-- LEGENDARY -->
+
+    <section class="form-section">
+
+      <div class="legendary-field">
+
+        <div class="field">
+
+          <label>
+            Legendary
+            <span class="optional">
+              optional
+            </span>
+          </label>
+
+
+          <div
+            class="legendary-picker"
+            id="newCatchLegendaryPicker"
+          ></div>
+
+
+          <p class="legendary-note">
+            Selecting a Legendary option automatically
+            makes this catch Legendary.
+          </p>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+
+    <div class="modal-footer">
+
+      <button
+        class="button secondary"
+        id="cancelModalButton"
+        type="button"
+      >
+        Cancel
+      </button>
+
+
+      <button
+        class="button"
+        type="submit"
+      >
+        Save catch
+      </button>
+
+    </div>
+
+  </form>
+
+</section>
+
+</div>
+
+
+
+<!-- ==========================================================
+     ADD ENCOUNTER MODAL
+=========================================================== -->
+
+<div
+  class="modal-backdrop"
+  id="encounterModal"
+  aria-hidden="true"
+>
+
+<section
+  class="modal"
+  role="dialog"
+  aria-modal="true"
+>
+
+  <div class="modal-header">
+
+    <div>
+
+      <h2>
+        Add encounter
+      </h2>
+
+      <p id="encounterModalPerson">
+        Add another encounter.
+      </p>
+
+    </div>
+
+
+    <button
+      class="close-button"
+      id="closeEncounterButton"
+      type="button"
+    >
+      ×
+    </button>
+
+  </div>
+
+
+  <form
+    class="catch-form"
+    id="encounterForm"
+  >
+
+    <p
+      class="form-error"
+      id="encounterError"
+    ></p>
+
+
+    <!-- ENCOUNTER DETAILS -->
+
+    <section class="form-section">
+
+      <h3>
+        Encounter details
+      </h3>
+
+
+      <div class="form-grid">
+
+        <div class="field">
+
+          <label for="newEncounterDate">
+            Date
+          </label>
+
+          <input
+            id="newEncounterDate"
+            name="date"
+            type="date"
+            required
+          >
+
+        </div>
+
+
+        <div class="field">
+
+          <label for="newEncounterLocation">
+            Location
+            <span class="optional">
+              optional
+            </span>
+          </label>
+
+          <input
+            id="newEncounterLocation"
+            name="location"
+            type="text"
+          >
+
+        </div>
+
+
+        <div class="field">
+
+          <label for="newEncounterRating">
+            Encounter rating
+          </label>
+
+          <select
+            id="newEncounterRating"
+            name="rating"
+            required
+          >
+
+            <option value="1">
+              1★
+            </option>
+
+            <option value="2">
+              2★
+            </option>
+
+            <option
+              value="3"
+              selected
+            >
+              3★
+            </option>
+
+            <option value="4">
+              4★
+            </option>
+
+            <option value="5">
+              5★
+            </option>
+
+          </select>
+
+        </div>
+
+
+        <div class="field">
+
+          <label>
+            Protection
+          </label>
+
+
+          <div class="choice-row">
+
+            <div class="choice">
+
+              <input
+                id="newProtected"
+                type="radio"
+                name="protection"
+                value="protected"
+                required
+              >
+
+              <label for="newProtected">
+                Protected 🛡️
+              </label>
+
+            </div>
+
+
+            <div class="choice">
+
+              <input
+                id="newUnprotected"
+                type="radio"
+                name="protection"
+                value="unprotected"
+              >
+
+              <label for="newUnprotected">
+                Unprotected ⚠️
+              </label>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+
+    <!-- ENCOUNTER BADGES -->
+
+    <section class="form-section">
+
+      <h3>
+        Badges
+      </h3>
+
+      <p class="field-note">
+        Add any badges that apply specifically to this encounter.
+      </p>
+
+
+      <div
+        class="badge-picker"
+        id="encounterBadgePicker"
+      ></div>
+
+    </section>
+
+
+
+    <!-- ENCOUNTER LEGENDARY -->
+
+    <section class="form-section">
+
+      <div class="legendary-field">
+
+        <div class="field">
+
+          <label>
+            Legendary
+            <span class="optional">
+              optional
+            </span>
+          </label>
+
+
+          <div
+            class="legendary-picker"
+            id="encounterLegendaryPicker"
+          ></div>
+
+
+          <p class="legendary-note">
+            A Legendary selection applies to this encounter.
+          </p>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+
+    <!-- NOTES -->
+
+    <section class="form-section">
+
+      <div class="field">
+
+        <label for="newEncounterNotes">
+          Private notes
+          <span class="optional">
+            optional
+          </span>
+        </label>
+
+        <textarea
+          id="newEncounterNotes"
+          name="notes"
+          maxlength="500"
+          placeholder="Optional note about this encounter..."
+        ></textarea>
+
+      </div>
+
+    </section>
+
+
+
+    <div class="modal-footer">
+
+      <button
+        class="button secondary"
+        id="cancelEncounterButton"
+        type="button"
+      >
+        Cancel
+      </button>
+
+
+      <button
+        class="button gold"
+        type="submit"
+      >
+        Save encounter
+      </button>
+
+    </div>
+
+  </form>
+
+</section>
+
+</div>
+
+
+
+<footer>
+
+  <div class="container">
+    Hoekedex dashboard · Private by design
+  </div>
+
+</footer>
+
+
+
+<script>
+
+/* ============================================================
+   STORAGE
+============================================================ */
+
+const STORAGE_KEY =
+  "hoekedex_catches_v1";
+
+
+/* ============================================================
+   BADGE DEFINITIONS
+============================================================ */
+
+const badgeDefinitions = [
+
+  {
+    name:"Met online",
+    value:"met_online",
+    icon:"▰"
+  },
+
+  {
+    name:"Friend of friend",
+    value:"friend_of_friend",
+    icon:"♟"
+  },
+
+  {
+    name:"Met at a bar",
+    value:"met_at_bar",
+    icon:"🍸"
+  },
+
+  {
+    name:"STD safe",
+    value:"std_safe",
+    icon:"🛡"
+  },
+
+  {
+    name:"Tested",
+    value:"tested",
+    icon:"I"
+  },
+
+  {
+    name:"Sober",
+    value:"sober",
+    icon:"●"
+  },
+
+  {
+    name:"Ghosted me",
+    value:"ghosted_me",
+    icon:"♙"
+  },
+
+  {
+    name:"Smart",
+    value:"smart",
+    icon:"💡"
+  },
+
+  {
+    name:"Made me laugh",
+    value:"made_me_laugh",
+    icon:"☻"
+  },
+
+  {
+    name:"Repeat",
+    value:"repeat",
+    icon:"↻"
+  },
+
+  {
+    name:"Kind soul",
+    value:"kind_soul",
+    icon:"♥"
+  },
+
+  {
+    name:"Morning glory",
+    value:"morning_glory",
+    icon:"☀"
+  },
+
+  {
+    name:"Sleepover",
+    value:"sleepover",
+    icon:"☾"
+  },
+
+  {
+    name:"All-nighter",
+    value:"all_nighter",
+    icon:"∞"
+  },
+
+  {
+    name:"Threesome",
+    value:"threesome",
+    icon:"●"
+  },
+
+  {
+    name:"Backdoor",
+    value:"backdoor",
+    icon:"◐"
+  },
+
+  {
+    name:"Toys",
+    value:"toys",
+    icon:"✦"
+  },
+
+  {
+    name:"Roleplay",
+    value:"roleplay",
+    icon:"☻"
+  },
+
+  {
+    name:"Public place",
+    value:"public_place",
+    icon:"☀"
+  },
+
+  {
+    name:"Travel catch",
+    value:"travel_catch",
+    icon:"➤"
+  }
+
+];
+
+
+const legendaryOptions = [
+
+  "Off Limits - Wore a ring",
+
+  "Plot Twist - Ladyboy",
+
+  "Double Trouble - Twins",
+
+  "Close Call - Siblings Friend"
+
+];
+
+
+/* ============================================================
+   TIER DEFINITIONS
+============================================================ */
+
+const tierDefinitions = {
+
+  common:new Set([
+
+    "met_online",
+
+    "friend_of_friend",
+
+    "met_at_bar",
+
+    "std_safe",
+
+    "tested",
+
+    "sober",
+
+    "ghosted_me"
+
+  ]),
+
+
+  rare:new Set([
+
+    "smart",
+
+    "made_me_laugh",
+
+    "repeat",
+
+    "kind_soul",
+
+    "morning_glory",
+
+    "sleepover",
+
+    "all_nighter"
+
+  ]),
+
+
+  ultra:new Set([
+
+    "threesome",
+
+    "backdoor",
+
+    "toys",
+
+    "roleplay",
+
+    "public_place",
+
+    "travel_catch"
+
+  ])
+
+};
+
+
+/* ============================================================
+   DEFAULT DATA
+============================================================ */
+
+const defaultCatches = [
+
+  {
+    id:"mock-001",
+    firstName:"Alex",
+    lastInitial:"",
+    nickname:"",
+    alias:"Alex",
+    tier:"legendary",
+    legendaryTag:"Double Trouble - Twins",
+    hair:"Blonde",
+    race:"White",
+    badges:["repeat"],
+    types:["repeat"],
+    notes:"",
+    encounters:[
+
+      {
+        date:"2026-08-23",
+        location:"Manchester",
+        rating:5,
+        protection:"protected",
+        badges:["repeat"],
+        legendaryTag:"Double Trouble - Twins"
+      },
+
+      {
+        date:"2026-07-10",
+        location:"Manchester",
+        rating:4,
+        protection:"protected",
+        badges:["repeat"],
+        legendaryTag:""
+      },
+
+      {
+        date:"2026-05-28",
+        location:"Leeds",
+        rating:4,
+        protection:"unprotected",
+        badges:["travel_catch"],
+        legendaryTag:""
+      }
+
+    ]
+
+  },
+
+
+  {
+    id:"mock-002",
+    firstName:"Jamie",
+    lastInitial:"",
+    nickname:"",
+    alias:"Jamie",
+    tier:"rare",
+    legendaryTag:"",
+    hair:"Brunette",
+    race:"Asian",
+    badges:["met_online","repeat"],
+    types:["met_online","repeat"],
+    notes:"",
+    encounters:[
+
+      {
+        date:"2026-08-17",
+        location:"Burnley",
+        rating:3,
+        protection:"protected",
+        badges:["met_online","repeat"],
+        legendaryTag:""
+      },
+
+      {
+        date:"2026-07-02",
+        location:"Burnley",
+        rating:4,
+        protection:"protected",
+        badges:["repeat"],
+        legendaryTag:""
+      },
+
+      {
+        date:"2026-06-13",
+        location:"Manchester",
+        rating:3,
+        protection:"unprotected",
+        badges:["met_online"],
+        legendaryTag:""
+      }
+
+    ]
+
+  },
+
+
+  {
+    id:"mock-003",
+    firstName:"Sam",
+    lastInitial:"",
+    nickname:"",
+    alias:"Sam",
+    tier:"ultra",
+    legendaryTag:"",
+    hair:"Redhead",
+    race:"White",
+    badges:["travel_catch"],
+    types:["travel_catch"],
+    notes:"",
+    encounters:[
+
+      {
+        date:"2026-08-04",
+        location:"London",
+        rating:4,
+        protection:"protected",
+        badges:["travel_catch"],
+        legendaryTag:""
+      },
+
+      {
+        date:"2026-05-01",
+        location:"London",
+        rating:5,
+        protection:"protected",
+        badges:["travel_catch"],
+        legendaryTag:""
+      }
+
+    ]
+
+  },
+
+
+  {
+    id:"mock-004",
+    firstName:"Taylor",
+    lastInitial:"",
+    nickname:"",
+    alias:"Taylor",
+    tier:"common",
+    legendaryTag:"",
+    hair:"Black",
+    race:"Mixed",
+    badges:["met_at_bar"],
+    types:["met_at_bar"],
+    notes:"",
+    encounters:[
+
+      {
+        date:"2026-07-29",
+        location:"Burnley",
+        rating:3,
+        protection:"protected",
+        badges:["met_at_bar"],
+        legendaryTag:""
+      }
+
+    ]
+
+  },
+
+
+  {
+    id:"mock-005",
+    firstName:"Morgan",
+    lastInitial:"",
+    nickname:"",
+    alias:"Morgan",
+    tier:"rare",
+    legendaryTag:"",
+    hair:"Blonde",
+    race:"Latina",
+    badges:["sleepover"],
+    types:["sleepover"],
+    notes:"",
+    encounters:[
+
+      {
+        date:"2026-07-01",
+        location:"Barcelona",
+        rating:4,
+        protection:"protected",
+        badges:["sleepover","travel_catch"],
+        legendaryTag:""
+      },
+
+      {
+        date:"2026-06-30",
+        location:"Barcelona",
+        rating:4,
+        protection:"protected",
+        badges:["sleepover"],
+        legendaryTag:""
+      }
+
+    ]
+
+  },
+
+
+  {
+    id:"mock-006",
+    firstName:"Casey",
+    lastInitial:"",
+    nickname:"",
+    alias:"Casey",
+    tier:"rare",
+    legendaryTag:"",
+    hair:"Brunette",
+    race:"",
+    badges:["smart"],
+    types:["smart"],
+    notes:"",
+    encounters:[
+
+      {
+        date:"2026-06-12",
+        location:"Manchester",
+        rating:4,
+        protection:"unprotected",
+        badges:["smart"],
+        legendaryTag:""
+      },
+
+      {
+        date:"2026-04-28",
+        location:"Manchester",
+        rating:4,
+        protection:"protected",
+        badges:["smart"],
+        legendaryTag:""
+      }
+
+    ]
+
+  }
+
+];
+
+
+/* ============================================================
+   STORAGE FUNCTIONS
+============================================================ */
+
+function normaliseEncounter(encounter){
+
+  return {
+
+    date:
+      encounter.date || "",
+
+    location:
+      encounter.location || "",
+
+    rating:
+      Number(encounter.rating) || 3,
+
+    protection:
+      encounter.protection || "",
+
+    badges:
+      Array.isArray(encounter.badges)
+        ? encounter.badges
+        : Array.isArray(encounter.types)
+          ? encounter.types
+          : [],
+
+    legendaryTag:
+      encounter.legendaryTag ||
+      encounter.legendary ||
+      "",
+
+    notes:
+      encounter.notes || ""
+
+  };
+
+}
+
+
+function normaliseCatch(item){
+
+  const encounters =
+    Array.isArray(item.encounters)
+      ? item.encounters.map(
+          normaliseEncounter
+        )
+      : [];
+
+
+  /*
+   * If older data has only a top-level
+   * types array, convert it to badges.
+   */
+
+  let badges =
+    Array.isArray(item.badges)
+      ? item.badges
+      : Array.isArray(item.types)
+        ? item.types
+        : [];
+
+
+  /*
+   * Combine all badges from encounters
+   * so the profile retains the person's
+   * accumulated badge history.
+   */
+
+  encounters.forEach(
+    encounter => {
+
+      encounter.badges.forEach(
+        badge => {
+
+          if(!badges.includes(badge)){
+            badges.push(badge);
+          }
+
+        }
+      );
+
+    }
+  );
+
+
+  /*
+   * If old data had a Legendary value,
+   * retain it.
+   */
+
+  let legendaryTag =
+    item.legendaryTag ||
+    item.legendary ||
+    "";
+
+
+  /*
+   * Also retain any Legendary encountered
+   * on an encounter.
+   */
+
+  if(!legendaryTag){
+
+    const legendaryEncounter =
+      encounters.find(
+        encounter =>
+          encounter.legendaryTag &&
+          legendaryOptions.includes(
+            encounter.legendaryTag
+          )
+      );
+
+
+    if(legendaryEncounter){
+      legendaryTag =
+        legendaryEncounter.legendaryTag;
+    }
+
+  }
+
+
+  return {
+
+    ...item,
+
+    badges,
+
+    /*
+     * Keep types as an alias for compatibility
+     * with any old saved data, but the UI now
+     * calls these Badges.
+     */
+
+    types:badges,
+
+    legendaryTag,
+
+    encounters,
+
+    notes:item.notes || ""
+
+  };
+
+}
+
+
+function loadCatches(){
+
+  try{
+
+    const saved =
+      localStorage.getItem(
+        STORAGE_KEY
+      );
+
+
+    if(saved){
+
+      const parsed =
+        JSON.parse(saved);
+
+
+      if(Array.isArray(parsed)){
+
+        return parsed.map(
+          normaliseCatch
+        );
+
+      }
+
+    }
+
+
+    const initial =
+      JSON.parse(
+        JSON.stringify(
+          defaultCatches
+        )
+      );
+
+
+    localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify(initial)
+    );
+
+
+    return initial.map(
+      normaliseCatch
+    );
+
+
+  }catch(error){
+
+    console.warn(
+      "Could not load Hoekedex data:",
+      error
+    );
+
+
+    return JSON.parse(
+      JSON.stringify(
+        defaultCatches
+      )
+    ).map(
+      normaliseCatch
+    );
+
+  }
+
+}
+
+
+function saveCatches(){
+
+  try{
+
+    localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify(catches)
+    );
+
+  }catch(error){
+
+    console.error(
+      "Could not save Hoekedex data:",
+      error
+    );
+
+  }
+
+}
+
+
+let catches =
+  loadCatches();
+
+
+/* ============================================================
+   ELEMENTS
+============================================================ */
+
+const listView =
+  document.getElementById(
+    "listView"
+  );
+
+const profileView =
+  document.getElementById(
+    "profileView"
+  );
+
+const catchesGrid =
+  document.getElementById(
+    "catchesGrid"
+  );
+
+const profileContent =
+  document.getElementById(
+    "profileContent"
+  );
+
+const searchInput =
+  document.getElementById(
+    "searchInput"
+  );
+
+const tierFilter =
+  document.getElementById(
+    "tierFilter"
+  );
+
+
+/* Add catch */
+
+const addCatchModal =
+  document.getElementById(
+    "addCatchModal"
+  );
+
+const addCatchForm =
+  document.getElementById(
+    "addCatchForm"
+  );
+
+const formError =
+  document.getElementById(
+    "formError"
+  );
+
+const autoTierValue =
+  document.getElementById(
+    "autoTierValue"
+  );
+
+
+/* Encounter */
+
+const encounterModal =
+  document.getElementById(
+    "encounterModal"
+  );
+
+const encounterForm =
+  document.getElementById(
+    "encounterForm"
+  );
+
+const encounterError =
+  document.getElementById(
+    "encounterError"
+  );
+
+const encounterModalPerson =
+  document.getElementById(
+    "encounterModalPerson"
+  );
+
+
+let activeEncounterCatchId =
+  null;
+
+
+/* ============================================================
+   BUILD BADGE PICKERS
+============================================================ */
+
+function buildBadgePicker(
+  containerId,
+  inputName
+){
+
+  const container =
+    document.getElementById(
+      containerId
+    );
+
+
+  container.innerHTML =
+    badgeDefinitions
+      .map(
+        badge => {
+
+          const id =
+            `${inputName}_${badge.value}`;
+
+
+          return `
+
+            <div class="badge-choice">
+
+              <input
+                id="${id}"
+                type="checkbox"
+                name="${inputName}"
+                value="${badge.value}"
+              >
+
+              <label for="${id}">
+                ${badge.name}
+              </label>
+
+            </div>
+
+          `;
+
+        }
+      )
+      .join("");
+
+
+}
+
+
+buildBadgePicker(
+  "newCatchBadgePicker",
+  "newCatchBadges"
+);
+
+
+buildBadgePicker(
+  "encounterBadgePicker",
+  "encounterBadges"
+);
+
+
+/* ============================================================
+   BUILD LEGENDARY PICKERS
+============================================================ */
+
+function buildLegendaryPicker(
+  containerId,
+  inputName
+){
+
+  const container =
+    document.getElementById(
+      containerId
+    );
+
+
+  container.innerHTML = `
+
+    <div class="legendary-choice">
+
+      <input
+        id="${inputName}_none"
+        type="radio"
+        name="${inputName}"
+        value=""
+        checked
+      >
+
+      <label for="${inputName}_none">
+        No Legendary
+      </label>
+
+    </div>
+
+    ${
+      legendaryOptions.map(
+        (option,index) => {
+
+          const id =
+            `${inputName}_${index}`;
+
+
+          return `
+
+            <div class="legendary-choice">
+
+              <input
+                id="${id}"
+                type="radio"
+                name="${inputName}"
+                value="${option}"
+              >
+
+              <label for="${id}">
+                ${option}
+              </label>
+
+            </div>
+
+          `;
+
+        }
+      ).join("")
+    }
+
+  `;
+
+}
+
+
+buildLegendaryPicker(
+  "newCatchLegendaryPicker",
+  "newCatchLegendary"
+);
+
+
+buildLegendaryPicker(
+  "encounterLegendaryPicker",
+  "encounterLegendary"
+);
+
+
+/* ============================================================
+   HELPERS
+============================================================ */
+
+function tierLabel(tier){
+
+  return {
+
+    common:"Common",
+
+    rare:"Rare",
+
+    ultra:"Ultra Rare",
+
+    legendary:"Legendary"
+
+  }[tier] || "Common";
+
+}
+
+
+function calculateTier(
+  badges = [],
+  legendaryTag = ""
+){
+
+  if(
+    legendaryTag &&
+    legendaryOptions.includes(
+      legendaryTag
+    )
+  ){
+
+    return "legendary";
+
+  }
+
+
+  const selected =
+    new Set(badges);
+
+
+  for(
+    const badge of tierDefinitions.ultra
+  ){
+
+    if(selected.has(badge)){
+      return "ultra";
+    }
+
+  }
+
+
+  for(
+    const badge of tierDefinitions.rare
+  ){
+
+    if(selected.has(badge)){
+      return "rare";
+    }
+
+  }
+
+
+  return "common";
+
+}
+
+
+function displayName(item){
+
+  return (
+
+    item.nickname &&
+    item.nickname.trim()
+
+      ? item.nickname.trim()
+
+      : item.alias ||
+        item.firstName ||
+        "Unnamed"
+
+  );
+
+}
+
+
+function fullIdentity(item){
+
+  const name =
+    `${item.firstName || ""} ${
+      item.lastInitial
+        ? item.lastInitial + "."
+        : ""
+    }`.trim();
+
+
+  if(item.nickname){
+
+    return `${item.nickname} (${name})`;
+
+  }
+
+
+  return name;
+
+}
+
+
+function starText(rating){
+
+  const value =
+    Math.max(
+      0,
+      Math.min(
+        5,
+        Math.round(
+          Number(rating) || 0
+        )
+      )
+    );
+
+
+  return (
+
+    "★".repeat(value) +
+
+    "☆".repeat(5 - value)
+
+  );
+
+}
+
+
+function formatDate(value){
+
+  if(!value){
+    return "Unknown";
+  }
+
+
+  const date =
+    new Date(
+      `${value}T12:00:00`
+    );
+
+
+  if(
+    Number.isNaN(
+      date.getTime()
+    )
+  ){
+
+    return value;
+
+  }
+
+
+  return new Intl.DateTimeFormat(
+    "en-GB",
+    {
+      day:"numeric",
+      month:"short",
+      year:"numeric"
+    }
+  ).format(date);
+
+}
+
+
+function averageRating(
+  encounters
+){
+
+  const values =
+    encounters
+      .map(
+        e =>
+          Number(e.rating)
+      )
+      .filter(
+        n =>
+          Number.isFinite(n) &&
+          n >= 1 &&
+          n <= 5
+      );
+
+
+  if(!values.length){
+    return 0;
+  }
+
+
+  return Number(
+
+    (
+      values.reduce(
+        (a,b) => a+b,
+        0
+      ) / values.length
+
+    ).toFixed(1)
+
+  );
+
+}
+
+
+function sortedEncounters(
+  encounters
+){
+
+  return [
+    ...encounters
+  ].sort(
+    (a,b) =>
+      String(b.date)
+        .localeCompare(
+          String(a.date)
+        )
+  );
+
+}
+
+
+function evolutionForCount(
+  count
+){
+
+  if(count >= 30){
+
+    return {
+      name:"Platinum",
+      next:null,
+      progress:"88%"
+    };
+
+  }
+
+
+  if(count >= 15){
+
+    return {
+      name:"Gold",
+      next:30,
+      progress:"63%"
+    };
+
+  }
+
+
+  if(count >= 5){
+
+    return {
+      name:"Silver",
+      next:15,
+      progress:"38%"
+    };
+
+  }
+
+
+  return {
+    name:"Bronze",
+    next:5,
+    progress:"13%"
+  };
+
+}
+
+
+function protectionInfo(
+  value
+){
+
+  if(value === "protected"){
+
+    return {
+      label:"Protected 🛡️",
+      className:"protection-used"
+    };
+
+  }
+
+
+  if(value === "unprotected"){
+
+    return {
+      label:"Unprotected ⚠️",
+      className:"protection-not-used"
+    };
+
+  }
+
+
+  return {
+    label:"Not logged",
+    className:"protection-unknown"
+  };
+
+}
+
+
+function badgeName(value){
+
+  const badge =
+    badgeDefinitions.find(
+      b => b.value === value
+    );
+
+
+  return badge
+    ? badge.name
+    : value;
+
+}
+
+
+/* ============================================================
+   UPDATE TIER PREVIEW
+============================================================ */
+
+function updateTierPreview(){
+
+  const badges =
+    [
+      ...document.querySelectorAll(
+        'input[name="newCatchBadges"]:checked'
+      )
+    ].map(
+      input => input.value
+    );
+
+
+  const legendaryInput =
+    document.querySelector(
+      'input[name="newCatchLegendary"]:checked'
+    );
+
+
+  const legendaryTag =
+    legendaryInput
+      ? legendaryInput.value
+      : "";
+
+
+  const tier =
+    calculateTier(
+      badges,
+      legendaryTag
+    );
+
+
+  autoTierValue.textContent =
+    tierLabel(tier);
+
+
+  autoTierValue.className =
+    `tier-chip tier-${tier}`;
+
+}
+
+
+document.addEventListener(
+  "change",
+  event => {
+
+    if(
+      event.target.matches(
+        'input[name="newCatchBadges"], input[name="newCatchLegendary"]'
+      )
+    ){
+
+      updateTierPreview();
+
+    }
+
+  }
+);
+
+
+/* ============================================================
+   RENDER CATCHES
+============================================================ */
+
+function renderCatches(){
+
+  const query =
+    searchInput.value
+      .trim()
+      .toLowerCase();
+
+
+  const selectedTier =
+    tierFilter.value;
+
+
+  const filtered =
+    catches.filter(
+      item => {
+
+        const tier =
+          calculateTier(
+            item.badges,
+            item.legendaryTag
+          );
+
+
+        const text =
+          `
+            ${displayName(item)}
+            ${item.firstName || ""}
+            ${item.lastInitial || ""}
+            ${item.nickname || ""}
+            ${item.hair || ""}
+            ${item.race || ""}
+            ${item.legendaryTag || ""}
+            ${(item.badges || []).join(" ")}
+          `.toLowerCase();
+
+
+        return (
+
+          (!query ||
+            text.includes(query))
+
+          &&
+
+          (!selectedTier ||
+            tier === selectedTier)
+
+        );
+
+      }
+    );
+
+
+  if(!filtered.length){
+
+    catchesGrid.innerHTML = `
+
+      <div class="empty-state">
+        No catches match that search or tier.
+      </div>
+
+    `;
+
+    return;
+
+  }
+
+
+  catchesGrid.innerHTML =
+    filtered.map(
+      item => {
+
+        const tier =
+          calculateTier(
+            item.badges,
+            item.legendaryTag
+          );
+
+
+        const encounters =
+          sortedEncounters(
+            item.encounters
+          );
+
+
+        const average =
+          averageRating(
+            item.encounters
+          );
+
+
+        return `
+
+          <a
+            class="catch-card"
+            href="#profile/${item.id}"
+            data-profile-id="${item.id}"
+          >
+
+            <div class="card-image">
+              Photo
+            </div>
+
+
+            <div class="card-body">
+
+              <div class="card-title-row">
+
+                <span class="card-title">
+                  ${displayName(item)}
+                </span>
+
+
+                <span
+                  class="tier-chip tier-${tier}"
+                >
+                  ${tierLabel(tier)}
+                </span>
+
+              </div>
+
+
+              ${
+                item.legendaryTag
+
+                  ? `
+
+                    <div class="legendary-mini">
+                      ✦ ${item.legendaryTag}
+                    </div>
+
+                  `
+
+                  : ""
+              }
+
+
+              <div class="card-meta">
+
+                <span>
+                  ${item.encounters.length}
+                  encounter${
+                    item.encounters.length === 1
+                      ? ""
+                      : "s"
+                  }
+                </span>
+
+
+                <span class="stars">
+                  ${starText(average)}
+                </span>
+
+              </div>
+
+
+              <div class="card-meta">
+
+                <span>
+
+                  ${
+                    encounters.length
+
+                      ? formatDate(
+                          encounters[0].date
+                        )
+
+                      : "No encounters"
+                  }
+
+                </span>
+
+
+                <span>
+                  ${item.hair || ""}
+                </span>
+
+              </div>
+
+            </div>
+
+          </a>
+
+        `;
+
+      }
+    ).join("");
+
+}
+
+
+/* ============================================================
+   ACCUMULATED BADGES
+============================================================ */
+
+function getAccumulatedBadges(
+  item
+){
+
+  const badges =
+    new Set(
+      item.badges || []
+    );
+
+
+  (
+    item.encounters || []
+  ).forEach(
+    encounter => {
+
+      (
+        encounter.badges || []
+      ).forEach(
+        badge =>
+          badges.add(badge)
+      );
+
+    }
+  );
+
+
+  return [
+    ...badges
+  ];
+
+}
+
+
+/* ============================================================
+   RENDER PROFILE BADGES
+============================================================ */
+
+function renderBadges(
+  item
+){
+
+  const accumulated =
+    new Set(
+      getAccumulatedBadges(item)
+    );
+
+
+  return badgeDefinitions
+    .map(
+      badge => {
+
+        const unlocked =
+          accumulated.has(
+            badge.value
+          );
+
+
+        return `
+
+          <div
+            class="badge ${
+              unlocked
+                ? ""
+                : "locked"
+            }"
+          >
+
+            <div class="badge-icon">
+              ${
+                unlocked
+                  ? badge.icon
+                  : "🔒"
+              }
+            </div>
+
+
+            <strong>
+              ${
+                unlocked
+                  ? badge.name
+                  : "Locked"
+              }
+            </strong>
+
+
+            <small>
+              ${
+                unlocked
+                  ? "Unlocked"
+                  : "Keep logging"
+              }
+            </small>
+
+          </div>
+
+        `;
+
+      }
+    )
+    .join("");
+
+}
+
+
+/* ============================================================
+   RENDER PROFILE
+============================================================ */
+
+function renderProfile(
+  id
+){
+
+  const item =
+    catches.find(
+      c => c.id === id
+    );
+
+
+  if(!item){
+
+    profileContent.innerHTML = `
+
+      <div class="empty-state">
+        This profile could not be found.
+      </div>
+
+    `;
+
+    return;
+
+  }
+
+
+  const accumulatedBadges =
+    getAccumulatedBadges(item);
+
+
+  const encounters =
+    sortedEncounters(
+      item.encounters
+    );
+
+
+  /*
+   * A person's profile tier is based on
+   * all badges accumulated across encounters,
+   * plus their Legendary history.
+   */
+
+  const profileLegendary =
+    item.legendaryTag ||
+    encounters
+      .map(
+        e => e.legendaryTag
+      )
+      .find(
+        tag =>
+          legendaryOptions.includes(tag)
+      ) ||
+    "";
+
+
+  const tier =
+    calculateTier(
+      accumulatedBadges,
+      profileLegendary
+    );
+
+
+  item.badges =
+    accumulatedBadges;
+
+
+  item.types =
+    accumulatedBadges;
+
+
+  item.legendaryTag =
+    profileLegendary;
+
+
+  item.tier =
+    tier;
+
+
+  const count =
+    encounters.length;
+
+
+  const average =
+    averageRating(
+      encounters
+    );
+
+
+  const evolution =
+    evolutionForCount(
+      count
+    );
+
+
+  const remaining =
+    evolution.next
+
+      ? Math.max(
+          0,
+          evolution.next - count
+        )
+
+      : 0;
+
+
+  const nextText =
+    evolution.next
+
+      ? `${remaining} more to next evolution`
+
+      : "Maximum evolution reached";
+
+
+  /*
+   * Persist any normalisation/aggregation.
+   */
+
+  saveCatches();
+
+
+  profileContent.innerHTML = `
+
+    <div class="profile-layout">
+
+
+      <!-- ==================================================
+           PROFILE CARD
+      =================================================== -->
+
+      <section
+        class="profile-panel profile-hero"
+      >
+
+        <div class="profile-photo">
+
+          Photo
+
+
+          <!-- PLUS BUTTON -->
+
+          <button
+            class="profile-add-button"
+            type="button"
+            aria-label="Add encounter with ${displayName(item)}"
+            title="Add encounter"
+            data-add-encounter="${item.id}"
+          >
+            +
+          </button>
+
+        </div>
+
+
+        <div class="profile-main">
+
+          <div class="profile-name-row">
+
+            <div>
+
+              <h1>
+                ${displayName(item)}
+              </h1>
+
+
+              <p class="profile-id">
+                ${fullIdentity(item)}
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <!-- TIER -->
+
+          <div class="tier-feature">
+
+            <div>
+
+              <small>
+                Rarity tier
+              </small>
+
+              <strong>
+                ${tierLabel(tier)}
+              </strong>
+
+            </div>
+
+
+            <span
+              class="tier-chip tier-${tier}"
+            >
+              ${tierLabel(tier)}
+            </span>
+
+          </div>
+
+
+          <!-- LEGENDARY -->
+
+          ${
+            profileLegendary
+
+              ? `
+
+                <div
+                  class="legendary-profile"
+                >
+
+                  <span
+                    class="legendary-profile-label"
+                  >
+                    Legendary
+                  </span>
+
+
+                  <span
+                    class="legendary-profile-name"
+                  >
+                    ${profileLegendary}
+                  </span>
+
+                </div>
+
+              `
+
+              : ""
+          }
+
+
+          <!-- RATING -->
+
+          <div class="rating-block">
+
+            <div>
+
+              <small>
+                Average encounter rating
+              </small>
+
+
+              <div class="rating-stars">
+                ${starText(
+                  Math.round(average)
+                )}
+              </div>
+
+            </div>
+
+
+            <div class="rating-value">
+              ${average}/5
+            </div>
+
+          </div>
+
+
+          <!-- DETAILS -->
+
+          <div class="details-grid">
+
+            <div class="detail">
+
+              <span>
+                Hair
+              </span>
+
+              <strong>
+                ${
+                  item.hair ||
+                  "Not logged"
+                }
+              </strong>
+
+            </div>
+
+
+            <div class="detail">
+
+              <span>
+                Race
+              </span>
+
+              <strong>
+                ${
+                  item.race ||
+                  "Not logged"
+                }
+              </strong>
+
+            </div>
+
+
+            <div class="detail">
+
+              <span>
+                Badges
+              </span>
+
+              <strong>
+                ${accumulatedBadges.length}
+              </strong>
+
+            </div>
+
+
+            <div class="detail">
+
+              <span>
+                Encounters
+              </span>
+
+              <strong>
+                ${count}
+              </strong>
+
+            </div>
+
+
+            <div class="detail">
+
+              <span>
+                Latest encounter
+              </span>
+
+              <strong>
+                ${
+                  encounters.length
+
+                    ? formatDate(
+                        encounters[0].date
+                      )
+
+                    : "None"
+                }
+              </strong>
+
+            </div>
+
+
+            <div class="detail">
+
+              <span>
+                Notes
+              </span>
+
+              <strong>
+                ${
+                  item.notes
+                    ? "Saved"
+                    : "None"
+                }
+              </strong>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+
+      <!-- ==================================================
+           RIGHT SIDE
+      =================================================== -->
+
+      <div class="quick-stack">
+
+
+        <!-- EVOLUTION -->
+
+        <section
+          class="profile-panel section-panel"
+        >
+
+          <div class="section-heading">
+
+            <h2>
+              Evolution
+            </h2>
+
+            <span>
+              Based on encounter count
+            </span>
+
+          </div>
+
+
+          <div class="evolution-current">
+
+            <div class="evo-title">
+
+              <div class="evo-medal">
+                ✦
+              </div>
+
+
+              <div>
+
+                <h3>
+                  ${evolution.name} evolution
+                </h3>
+
+                <p>
+                  ${nextText}
+                </p>
+
+              </div>
+
+            </div>
+
+
+            <div class="evo-count">
+
+              <strong>
+                ${count}
+              </strong>
+
+              <span>
+                encounters
+              </span>
+
+            </div>
+
+          </div>
+
+
+          <div
+            class="evolution-track"
+            style="
+              --evolution-progress:
+              ${evolution.progress}
+            "
+          >
+
+            <div class="evolution-step">
+
+              <div class="step-dot bronze">
+                1
+              </div>
+
+              <strong>
+                Bronze
+              </strong>
+
+              <span>
+                1 encounter
+              </span>
+
+            </div>
+
+
+            <div class="evolution-step">
+
+              <div class="step-dot silver">
+                5
+              </div>
+
+              <strong>
+                Silver
+              </strong>
+
+              <span>
+                5 encounters
+              </span>
+
+            </div>
+
+
+            <div class="evolution-step">
+
+              <div class="step-dot gold">
+                15
+              </div>
+
+              <strong>
+                Gold
+              </strong>
+
+              <span>
+                15 encounters
+              </span>
+
+            </div>
+
+
+            <div class="evolution-step">
+
+              <div class="step-dot platinum">
+                30
+              </div>
+
+              <strong>
+                Platinum
+              </strong>
+
+              <span>
+                30 encounters
+              </span>
+
+            </div>
+
+          </div>
+
+        </section>
+
+
+
+        <!-- BADGES -->
+
+        <section
+          class="profile-panel section-panel"
+        >
+
+          <div class="section-heading">
+
+            <h2>
+              Badges
+            </h2>
+
+            <span>
+              ${accumulatedBadges.length}
+              unlocked
+            </span>
+
+          </div>
+
+
+          <div class="badge-grid">
+
+            ${renderBadges(item)}
+
+          </div>
+
+        </section>
+
+
+
+        <!-- ENCOUNTER LOG -->
+
+        <section
+          class="profile-panel section-panel"
+        >
+
+          <div class="section-heading">
+
+            <h2>
+              Encounter log
+            </h2>
+
+            <span>
+              ${count} total
+            </span>
+
+          </div>
+
+
+          <div class="encounter-log">
+
+            ${
+              encounters.length
+
+                ? encounters.map(
+                    (encounter,index) => {
+
+                      const protection =
+                        protectionInfo(
+                          encounter.protection
+                        );
+
+
+                      return `
+
+                        <div
+                          class="encounter"
+                        >
+
+                          <div
+                            class="encounter-left"
+                          >
+
+                            <div
+                              class="encounter-date"
+                            >
+                              ${formatDate(
+                                encounter.date
+                              )}
+                            </div>
+
+
+                            <div
+                              class="encounter-meta"
+                            >
+
+                              ${
+                                encounter.location ||
+                                "Location not logged"
+                              }
+
+                            </div>
+
+
+                            ${
+                              encounter.badges &&
+                              encounter.badges.length
+
+                                ? `
+
+                                  <div
+                                    class="encounter-badges"
+                                  >
+
+                                    ${
+                                      encounter.badges
+                                        .map(
+                                          badge => `
+
+                                            <span
+                                              class="encounter-badge"
+                                            >
+                                              ${badgeName(
+                                                badge
+                                              )}
+                                            </span>
+
+                                          `
+                                        )
+                                        .join("")
+                                    }
+
+                                  </div>
+
+                                `
+
+                                : ""
+                            }
+
+
+                            ${
+                              encounter.legendaryTag
+
+                                ? `
+
+                                  <div
+                                    class="encounter-legendary"
+                                  >
+                                    ✦ ${
+                                      encounter.legendaryTag
+                                    }
+                                  </div>
+
+                                `
+
+                                : ""
+                            }
+
+
+                            ${
+                              encounter.notes
+
+                                ? `
+
+                                  <div
+                                    class="encounter-meta"
+                                    style="
+                                      margin-top:8px;
+                                    "
+                                  >
+                                    ${encounter.notes}
+                                  </div>
+
+                                `
+
+                                : ""
+                            }
+
+                          </div>
+
+
+                          <div
+                            class="encounter-right"
+                          >
+
+                            <div
+                              class="encounter-rating"
+                            >
+                              ${starText(
+                                encounter.rating
+                              )}
+                            </div>
+
+
+                            <span
+                              class="
+                                protection-badge
+                                ${protection.className}
+                              "
+                            >
+                              ${protection.label}
+                            </span>
+
+
+                            <span
+                              class="encounter-number"
+                            >
+                              #${count-index}
+                            </span>
+
+                          </div>
+
+                        </div>
+
+                      `;
+
+                    }
+                  ).join("")
+
+                : `
+
+                  <div
+                    class="empty-state"
+                  >
+                    No encounters logged yet.
+                  </div>
+
+                `
+            }
+
+          </div>
+
+        </section>
+
+      </div>
+
+    </div>
+
+  `;
+
+}
+
+
+/* ============================================================
+   PROFILE NAVIGATION
+============================================================ */
+
+function openProfile(
+  id,
+  updateHash = true
+){
+
+  listView.classList.add(
+    "is-hidden"
+  );
+
+  profileView.classList.add(
+    "is-open"
+  );
+
+
+  renderProfile(id);
+
+
+  if(updateHash){
+
+    window.location.hash =
+      `profile/${id}`;
+
+  }
+
+
+  window.scrollTo({
+    top:0,
+    behavior:"smooth"
+  });
+
+}
+
+
+function closeProfile(
+  updateHash = true
+){
+
+  profileView.classList.remove(
+    "is-open"
+  );
+
+  listView.classList.remove(
+    "is-hidden"
+  );
+
+
+  if(updateHash){
+
+    history.replaceState(
+      null,
+      "",
+      window.location.pathname +
+      window.location.search
+    );
+
+  }
+
+
+  window.scrollTo({
+    top:0,
+    behavior:"smooth"
+  });
+
+}
+
+
+/* ============================================================
+   ADD CATCH MODAL
+============================================================ */
+
+function openCatchModal(){
+
+  formError.textContent =
+    "";
+
+  formError.classList.remove(
+    "is-visible"
+  );
+
+
+  addCatchForm.reset();
+
+
+  /*
+   * Make sure the radio pickers
+   * are reset to their first options.
+   */
+
+  const noLegendary =
+    document.querySelector(
+      'input[name="newCatchLegendary"][value=""]'
+    );
+
+
+  if(noLegendary){
+    noLegendary.checked = true;
+  }
+
+
+  addCatchModal.classList.add(
+    "is-open"
+  );
+
+  addCatchModal.setAttribute(
+    "aria-hidden",
+    "false"
+  );
+
+
+  document.body.style.overflow =
+    "hidden";
+
+
+  updateTierPreview();
+
+
+  setTimeout(
+    () =>
+      document
+        .getElementById(
+          "firstName"
+        )
+        .focus(),
+    50
+  );
+
+}
+
+
+function closeCatchModal(){
+
+  addCatchModal.classList.remove(
+    "is-open"
+  );
+
+  addCatchModal.setAttribute(
+    "aria-hidden",
+    "true"
+  );
+
+  document.body.style.overflow =
+    "";
+
+}
+
+
+function showFormError(
+  message
+){
+
+  formError.textContent =
+    message;
+
+  formError.classList.add(
+    "is-visible"
+  );
+
+}
+
+
+/* ============================================================
+   SAVE NEW CATCH
+============================================================ */
+
+addCatchForm.addEventListener(
+  "submit",
+  event => {
+
+    event.preventDefault();
+
+
+    const data =
+      new FormData(
+        addCatchForm
+      );
+
+
+    const firstName =
+      String(
+        data.get("firstName") || ""
+      ).trim();
+
+
+    const hair =
+      String(
+        data.get("hair") || ""
+      );
+
+
+    const date =
+      String(
+        data.get("encounterDate") || ""
+      );
+
+
+    const protection =
+      String(
+        data.get("protection") || ""
+      );
+
+
+    if(!firstName){
+
+      showFormError(
+        "First name is required."
+      );
+
+      return;
+
+    }
+
+
+    if(!hair){
+
+      showFormError(
+        "Choose a hair colour."
+      );
+
+      return;
+
+    }
+
+
+    if(!date){
+
+      showFormError(
+        "Add the first encounter date."
+      );
+
+      return;
+
+    }
+
+
+    if(!protection){
+
+      showFormError(
+        "Choose a protection status."
+      );
+
+      return;
+
+    }
+
+
+    const badges =
+      data.getAll(
+        "newCatchBadges"
+      );
+
+
+    const legendaryTag =
+      String(
+        data.get(
+          "newCatchLegendary"
+        ) || ""
+      ).trim();
+
+
+    const tier =
+      calculateTier(
+        badges,
+        legendaryTag
+      );
+
+
+    const firstEncounter = {
+
+      date,
+
+      location:
+        String(
+          data.get(
+            "encounterLocation"
+          ) || ""
+        ).trim(),
+
+      rating:
+        Number(
+          data.get(
+            "encounterRating"
+          ) || 3
+        ),
+
+      protection,
+
+      badges,
+
+      legendaryTag,
+
+      notes:
+        String(
+          data.get(
+            "notes"
+          ) || ""
+        ).trim()
+
+    };
+
+
+    const newCatch = {
+
+      id:
+        `catch-${Date.now()}-${Math.random()
+          .toString(36)
+          .slice(2,7)}`,
+
+      firstName,
+
+      lastInitial:
+        String(
+          data.get(
+            "lastInitial"
+          ) || ""
+        )
+        .trim()
+        .slice(0,1)
+        .toUpperCase(),
+
+      nickname:
+        String(
+          data.get(
+            "nickname"
+          ) || ""
+        ).trim(),
+
+      alias:
+        String(
+          data.get(
+            "nickname"
+          ) ||
+          data.get(
+            "firstName"
+          ) ||
+          ""
+        ).trim(),
+
+      tier,
+
+      legendaryTag,
+
+      hair,
+
+      race:
+        String(
+          data.get(
+            "race"
+          ) || ""
+        ),
+
+      badges,
+
+      /*
+       * Keep this for compatibility with
+       * older versions of the app.
+       */
+
+      types:badges,
+
+      notes:
+        String(
+          data.get(
+            "notes"
+          ) || ""
+        ).trim(),
+
+      encounters:[
+        firstEncounter
+      ]
+
+    };
+
+
+    catches.unshift(
+      newCatch
+    );
+
+
+    /*
+     * SAVE IMMEDIATELY.
+     */
+
+    saveCatches();
+
+
+    closeCatchModal();
+
+
+    renderCatches();
+
+
+    /*
+     * Go straight to the new profile.
+     */
+
+    openProfile(
+      newCatch.id
+    );
+
+  }
+);
+
+
+/* ============================================================
+   ADD ENCOUNTER MODAL
+============================================================ */
+
+function openEncounterModal(
+  catchId
+){
+
+  const item =
+    catches.find(
+      c =>
+        c.id === catchId
+    );
+
+
+  if(!item){
+    return;
+  }
+
+
+  activeEncounterCatchId =
+    catchId;
+
+
+  encounterModalPerson.textContent =
+    `Add another encounter to ${displayName(item)}.`;
+
+
+  encounterError.textContent =
+    "";
+
+  encounterError.classList.remove(
+    "is-visible"
+  );
+
+
+  encounterForm.reset();
+
+
+  /*
+   * Default the date to today.
+   */
+
+  document.getElementById(
+    "newEncounterDate"
+  ).value =
+    new Date()
+      .toISOString()
+      .slice(0,10);
+
+
+  /*
+   * Reset Legendary to No Legendary.
+   */
+
+  const noLegendary =
+    document.querySelector(
+      'input[name="encounterLegendary"][value=""]'
+    );
+
+
+  if(noLegendary){
+    noLegendary.checked = true;
+  }
+
+
+  encounterModal.classList.add(
+    "is-open"
+  );
+
+  encounterModal.setAttribute(
+    "aria-hidden",
+    "false"
+  );
+
+
+  document.body.style.overflow =
+    "hidden";
+
+
+  setTimeout(
+    () =>
+      document
+        .getElementById(
+          "newEncounterDate"
+        )
+        .focus(),
+    50
+  );
+
+}
+
+
+function closeEncounterModal(){
+
+  encounterModal.classList.remove(
+    "is-open"
+  );
+
+  encounterModal.setAttribute(
+    "aria-hidden",
+    "true"
+  );
+
+
+  activeEncounterCatchId =
+    null;
+
+
+  document.body.style.overflow =
+    "";
+
+}
+
+
+function showEncounterError(
+  message
+){
+
+  encounterError.textContent =
+    message;
+
+  encounterError.classList.add(
+    "is-visible"
+  );
+
+}
+
+
+/* ============================================================
+   SAVE NEW ENCOUNTER
+============================================================ */
+
+encounterForm.addEventListener(
+  "submit",
+  event => {
+
+    event.preventDefault();
+
+
+    if(!activeEncounterCatchId){
+      return;
+    }
+
+
+    const item =
+      catches.find(
+        c =>
+          c.id ===
+          activeEncounterCatchId
+      );
+
+
+    if(!item){
+      return;
+    }
+
+
+    const data =
+      new FormData(
+        encounterForm
+      );
+
+
+    const date =
+      String(
+        data.get("date") || ""
+      );
+
+
+    const protection =
+      String(
+        data.get("protection") || ""
+      );
+
+
+    if(!date){
+
+      showEncounterError(
+        "Choose an encounter date."
+      );
+
+      return;
+
+    }
+
+
+    if(!protection){
+
+      showEncounterError(
+        "Choose a protection status."
+      );
+
+      return;
+
+    }
+
+
+    const badges =
+      data.getAll(
+        "encounterBadges"
+      );
+
+
+    const legendaryTag =
+      String(
+        data.get(
+          "encounterLegendary"
+        ) || ""
+      ).trim();
+
+
+    const encounter = {
+
+      date,
+
+      location:
+        String(
+          data.get(
+            "location"
+          ) || ""
+        ).trim(),
+
+      rating:
+        Number(
+          data.get(
+            "rating"
+          ) || 3
+        ),
+
+      protection,
+
+      badges,
+
+      legendaryTag,
+
+      notes:
+        String(
+          data.get(
+            "notes"
+          ) || ""
+        ).trim()
+
+    };
+
+
+    /*
+     * Add to the SAME PERSON.
+     */
+
+    if(
+      !Array.isArray(
+        item.encounters
+      )
+    ){
+
+      item.encounters = [];
+
+    }
+
+
+    item.encounters.push(
+      encounter
+    );
+
+
+    /*
+     * Add the new encounter's badges
+     * to the person's accumulated badge
+     * collection.
+     */
+
+    if(
+      !Array.isArray(
+        item.badges
+      )
+    ){
+
+      item.badges = [];
+
+    }
+
+
+    badges.forEach(
+      badge => {
+
+        if(
+          !item.badges.includes(
+            badge
+          )
+        ){
+
+          item.badges.push(
+            badge
+          );
+
+        }
+
+      }
+    );
+
+
+    /*
+     * Keep old compatibility property.
+     */
+
+    item.types =
+      item.badges;
+
+
+    /*
+     * If this encounter is Legendary,
+     * retain the exact Legendary value
+     * on the person's profile.
+     */
+
+    if(
+      legendaryTag &&
+      legendaryOptions.includes(
+        legendaryTag
+      )
+    ){
+
+      item.legendaryTag =
+        legendaryTag;
+
+    }
+
+
+    /*
+     * Recalculate profile tier.
+     */
+
+    item.tier =
+      calculateTier(
+        item.badges,
+        item.legendaryTag
+      );
+
+
+    /*
+     * PERSIST.
+     */
+
+    saveCatches();
+
+
+    const id =
+      activeEncounterCatchId;
+
+
+    closeEncounterModal();
+
+
+    /*
+     * Update both views.
+     */
+
+    renderCatches();
+
+    renderProfile(id);
+
+  }
+);
+
+
+/* ============================================================
+   CATCH CARD CLICK
+============================================================ */
+
+catchesGrid.addEventListener(
+  "click",
+  event => {
+
+    const card =
+      event.target.closest(
+        "[data-profile-id]"
+      );
+
+
+    if(!card){
+      return;
+    }
+
+
+    event.preventDefault();
+
+
+    openProfile(
+      card.dataset.profileId
+    );
+
+  }
+);
+
+
+/* ============================================================
+   PROFILE PLUS BUTTON
+============================================================ */
+
+profileContent.addEventListener(
+  "click",
+  event => {
+
+    const button =
+      event.target.closest(
+        "[data-add-encounter]"
+      );
+
+
+    if(!button){
+      return;
+    }
+
+
+    openEncounterModal(
+      button.dataset.addEncounter
+    );
+
+  }
+);
+
+
+/* ============================================================
+   GENERAL BUTTONS
+============================================================ */
+
+document
+  .getElementById(
+    "addCatchButton"
+  )
+  .addEventListener(
+    "click",
+    openCatchModal
+  );
+
+
+document
+  .getElementById(
+    "closeModalButton"
+  )
+  .addEventListener(
+    "click",
+    closeCatchModal
+  );
+
+
+document
+  .getElementById(
+    "cancelModalButton"
+  )
+  .addEventListener(
+    "click",
+    closeCatchModal
+  );
+
+
+document
+  .getElementById(
+    "closeEncounterButton"
+  )
+  .addEventListener(
+    "click",
+    closeEncounterModal
+  );
+
+
+document
+  .getElementById(
+    "cancelEncounterButton"
+  )
+  .addEventListener(
+    "click",
+    closeEncounterModal
+  );
+
+
+document
+  .getElementById(
+    "backToCatches"
+  )
+  .addEventListener(
+    "click",
+    () =>
+      closeProfile()
+  );
+
+
+/* ============================================================
+   BACKDROP CLOSE
+============================================================ */
+
+addCatchModal.addEventListener(
+  "click",
+  event => {
+
+    if(
+      event.target ===
+      addCatchModal
+    ){
+
+      closeCatchModal();
+
+    }
+
+  }
+);
+
+
+encounterModal.addEventListener(
+  "click",
+  event => {
+
+    if(
+      event.target ===
+      encounterModal
+    ){
+
+      closeEncounterModal();
+
+    }
+
+  }
+);
+
+
+/* ============================================================
+   SEARCH / FILTER
+============================================================ */
+
+searchInput.addEventListener(
+  "input",
+  renderCatches
+);
+
+
+tierFilter.addEventListener(
+  "change",
+  renderCatches
+);
+
+
+/* ============================================================
+   ESCAPE
+============================================================ */
+
+document.addEventListener(
+  "keydown",
+  event => {
+
+    if(
+      event.key !== "Escape"
+    ){
+
+      return;
+
+    }
+
+
+    if(
+      addCatchModal.classList.contains(
+        "is-open"
+      )
+    ){
+
+      closeCatchModal();
+
+      return;
+
+    }
+
+
+    if(
+      encounterModal.classList.contains(
+        "is-open"
+      )
+    ){
+
+      closeEncounterModal();
+
+    }
+
+  }
+);
+
+
+/* ============================================================
+   HASH ROUTING
+============================================================ */
+
+function loadFromHash(){
+
+  const match =
+    window.location.hash.match(
+      /^#profile\/(.+)$/
+    );
+
+
+  if(match){
+
+    openProfile(
+      match[1],
+      false
+    );
+
+  }else{
+
+    closeProfile(
+      false
+    );
+
+  }
+
+}
+
+
+window.addEventListener(
+  "hashchange",
+  loadFromHash
+);
+
+
+/* ============================================================
+   STORAGE SYNC
+============================================================ */
+
+document.addEventListener(
+  "visibilitychange",
+  () => {
+
+    if(
+      document.visibilityState ===
+      "visible"
+    ){
+
+      catches =
+        loadCatches();
+
+
+      renderCatches();
+
+
+      const match =
+        window.location.hash.match(
+          /^#profile\/(.+)$/
+        );
+
+
+      if(match){
+
+        renderProfile(
+          match[1]
+        );
+
+      }
+
+    }
+
+  }
+);
+
+
+window.addEventListener(
+  "storage",
+  event => {
+
+    if(
+      event.key === STORAGE_KEY
+    ){
+
+      catches =
+        loadCatches();
+
+
+      renderCatches();
+
+
+      const match =
+        window.location.hash.match(
+          /^#profile\/(.+)$/
+        );
+
+
+      if(match){
+
+        renderProfile(
+          match[1]
+        );
+
+      }
+
+    }
+
+  }
+);
+
+
+/* ============================================================
+   INITIALISE
+============================================================ */
+
+renderCatches();
+
+updateTierPreview();
+
+loadFromHash();
+
+</script>
+
+</body>
+</html>
