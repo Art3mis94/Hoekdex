@@ -2,487 +2,710 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Hoekedex - Animated Creature Directory</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Player Stats & Badge Collection</title>
   <style>
     :root {
-      --bg-primary: #0f172a;
-      --bg-secondary: #1e293b;
-      --bg-card: #334155;
+      --bg-dark: #090d16;
+      --bg-card: #151c2c;
+      --bg-hover: #1e293b;
       --accent: #6366f1;
-      --accent-hover: #4f46e5;
-      --text-main: #f8fafc;
-      --text-sub: #94a3b8;
-      --border: #475569;
-      --badge-fire: #ef4444;
-      --badge-water: #3b82f6;
-      --badge-grass: #10b981;
-      --badge-electric: #f59e0b;
-      --badge-psychic: #ec4899;
+      --accent-glow: rgba(99, 102, 241, 0.4);
+      --text-primary: #f8fafc;
+      --text-muted: #94a3b8;
+      --border: #243048;
+      
+      --common: #94a3b8;
+      --rare: #3b82f6;
+      --ultra-rare: #a855f7;
+      --legendary: #eab308;
+      --star-gold: #f59e0b;
     }
 
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      -webkit-tap-highlight-color: transparent;
     }
 
     body {
-      background-color: var(--bg-primary);
-      color: var(--text-main);
-      padding: 2rem;
+      background-color: var(--bg-dark);
+      color: var(--text-primary);
+      padding: 0.75rem;
+      padding-bottom: 2rem;
       min-height: 100vh;
+      max-width: 600px;
+      margin: 0 auto;
     }
 
-    header {
+    /* Navigation Bar */
+    .navbar {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 2rem;
-      flex-wrap: wrap;
-      gap: 1rem;
-    }
-
-    h1 {
-      font-size: 2rem;
-      font-weight: 700;
-      letter-spacing: -0.05em;
-      color: #fff;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    .controls {
-      display: flex;
-      gap: 1rem;
-      flex-wrap: wrap;
-      align-items: center;
-    }
-
-    input, select, button {
-      background-color: var(--bg-secondary);
+      background: var(--bg-card);
       border: 1px solid var(--border);
-      color: var(--text-main);
-      padding: 0.6rem 1rem;
-      border-radius: 0.5rem;
-      outline: none;
-      font-size: 0.9rem;
-      transition: all 0.2s ease;
+      padding: 0.75rem 1rem;
+      border-radius: 0.85rem;
+      margin-bottom: 1rem;
     }
 
-    input:focus, select:focus {
-      border-color: var(--accent);
-    }
-
-    button {
-      cursor: pointer;
-      background-color: var(--accent);
-      border: none;
-      font-weight: 600;
-    }
-
-    button:hover {
-      background-color: var(--accent-hover);
-    }
-
-    .view-btn-group {
-      display: flex;
-      gap: 0.25rem;
-      background-color: var(--bg-secondary);
-      padding: 0.25rem;
-      border-radius: 0.5rem;
-      border: 1px solid var(--border);
-    }
-
-    .view-btn-group button {
-      background: transparent;
-      border: none;
-      border-radius: 0.3rem;
-      padding: 0.4rem 0.8rem;
-    }
-
-    .view-btn-group button.active {
-      background-color: var(--accent);
-    }
-
-    /* Grid View */
-    .dex-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-      gap: 1.5rem;
-    }
-
-    .card {
-      background-color: var(--bg-secondary);
-      border: 1px solid var(--border);
-      border-radius: 1rem;
-      padding: 1.5rem;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      position: relative;
-      cursor: pointer;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
-
-    .card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
-    }
-
-    .card-id {
-      position: absolute;
-      top: 1rem;
-      right: 1rem;
-      font-size: 0.8rem;
-      color: var(--text-sub);
-      font-weight: 700;
-    }
-
-    .sprite-container {
-      width: 100px;
-      height: 100px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 1rem 0;
-    }
-
-    .sprite {
-      max-width: 100%;
-      max-height: 100%;
-      filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));
-      animation: float 3s ease-in-out infinite;
-    }
-
-    @keyframes float {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-8px); }
-    }
-
-    .card-title {
-      font-size: 1.25rem;
-      margin-bottom: 0.5rem;
-      text-transform: capitalize;
-    }
-
-    .badges {
-      display: flex;
-      gap: 0.5rem;
-    }
-
-    .badge {
-      font-size: 0.75rem;
-      padding: 0.2rem 0.6rem;
-      border-radius: 1rem;
+    .nav-logo {
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: var(--accent);
       text-transform: uppercase;
-      font-weight: 700;
       letter-spacing: 0.05em;
     }
 
-    .badge-fire { background-color: var(--badge-fire); }
-    .badge-water { background-color: var(--badge-water); }
-    .badge-grass { background-color: var(--badge-grass); }
-    .badge-electric { background-color: var(--badge-electric); color: #000; }
-    .badge-psychic { background-color: var(--badge-psychic); }
-
-    .fav-btn {
-      position: absolute;
-      top: 1rem;
-      left: 1rem;
-      background: none;
-      border: none;
-      font-size: 1.2rem;
-      cursor: pointer;
-      padding: 0;
-      color: var(--text-sub);
+    .nav-links {
+      display: flex;
+      gap: 0.35rem;
     }
 
-    .fav-btn.active {
-      color: #f59e0b;
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.85rem;
+      padding: 0.4rem 0.75rem;
+      border-radius: 0.5rem;
+      transition: all 0.2s;
     }
 
-    /* List View Overrides */
-    .dex-list {
+    .nav-links a:hover, .nav-links a.active {
+      color: var(--text-primary);
+      background: var(--bg-hover);
+    }
+
+    .nav-links a.active {
+      border: 1px solid var(--accent);
+    }
+
+    /* Main Container Grid */
+    .stats-container {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    /* Level & EXP Card */
+    .level-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 0.85rem;
+      padding: 1rem;
       display: flex;
       flex-direction: column;
       gap: 0.75rem;
     }
 
-    .dex-list .card {
-      flex-direction: row;
+    .level-header {
+      display: flex;
       justify-content: space-between;
-      padding: 0.75rem 1.5rem;
+      align-items: flex-end;
     }
 
-    .dex-list .sprite-container {
-      width: 50px;
-      height: 50px;
-      margin: 0;
+    .level-title-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: 700;
     }
 
-    .dex-list .card-id, .dex-list .fav-btn {
-      position: static;
+    .level-badge {
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: var(--accent);
+      line-height: 1.1;
     }
 
-    .dex-list-left {
+    .exp-counter {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      font-weight: 600;
+      text-align: right;
+    }
+
+    .exp-bar-bg {
+      background: var(--bg-dark);
+      height: 10px;
+      border-radius: 5px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+
+    .exp-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), #a855f7);
+      width: 0%;
+      transition: width 0.4s ease;
+      border-radius: 5px;
+    }
+
+    /* Mobile Metrics (2 Lines Layout) */
+    .metrics-section {
       display: flex;
-      align-items: center;
-      gap: 1.5rem;
+      flex-direction: column;
+      gap: 0.6rem;
     }
 
-    /* Modal Overlay */
-    .modal-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background: rgba(0, 0, 0, 0.75);
+    .metric-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.6rem;
+    }
+
+    .metric-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 0.75rem;
+      padding: 0.85rem 0.5rem;
+      text-align: center;
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.3s ease;
-      z-index: 100;
+      min-height: 72px;
     }
 
-    .modal-overlay.active {
-      opacity: 1;
-      pointer-events: all;
+    .metric-value {
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: var(--text-primary);
+      line-height: 1.1;
+      margin-top: 0.15rem;
     }
 
-    .modal {
-      background-color: var(--bg-secondary);
+    .metric-label {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      font-weight: 700;
+    }
+
+    .star-rating-display {
+      color: var(--star-gold);
+      font-size: 1rem;
+      letter-spacing: 1px;
+      margin-top: 0.1rem;
+    }
+
+    .star-score-sub {
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      margin-top: 0.05rem;
+      font-weight: 600;
+    }
+
+    /* Distribution Breakdown Bars */
+    .breakdown-card {
+      background: var(--bg-card);
       border: 1px solid var(--border);
-      border-radius: 1rem;
-      width: 90%;
-      max-width: 500px;
-      padding: 2rem;
-      position: relative;
-      transform: scale(0.9);
-      transition: transform 0.3s ease;
+      border-radius: 0.85rem;
+      padding: 1rem;
     }
 
-    .modal-overlay.active .modal {
-      transform: scale(1);
+    .breakdown-card h3 {
+      font-size: 0.75rem;
+      margin-bottom: 0.75rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: 700;
     }
 
-    .close-btn {
-      position: absolute;
-      top: 1rem;
-      right: 1rem;
-      background: none;
-      border: none;
-      font-size: 1.5rem;
-      color: var(--text-sub);
-      cursor: pointer;
-    }
-
-    .stat-bar {
-      margin-top: 1rem;
-    }
-
-    .stat-row {
+    .stacked-bar {
+      height: 14px;
+      border-radius: 7px;
+      background: var(--bg-dark);
       display: flex;
-      justify-content: space-between;
-      margin-bottom: 0.25rem;
-      font-size: 0.85rem;
-    }
-
-    .bar-bg {
-      background-color: var(--bg-primary);
-      height: 8px;
-      border-radius: 4px;
       overflow: hidden;
+      border: 1px solid var(--border);
       margin-bottom: 0.75rem;
     }
 
-    .bar-fill {
+    .bar-segment {
       height: 100%;
-      background-color: var(--accent);
-      width: 0%;
-      transition: width 0.5s ease-out;
+      transition: width 0.3s ease;
+    }
+
+    /* Race Colors */
+    .seg-human { background: #ec4899; }
+    .seg-elf { background: #8b5cf6; }
+    .seg-cyborg { background: #06b6d4; }
+
+    /* Hair Colors */
+    .seg-blonde { background: #eab308; }
+    .seg-dark { background: #475569; }
+    .seg-silver { background: #cbd5e1; }
+    .seg-red { background: #f97316; }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem 0.8rem;
+      justify-content: center;
+      font-size: 0.75rem;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+      font-size: 0.75rem;
+      color: var(--text-primary);
+    }
+
+    .legend-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    /* Single Container Badge Showcase Card */
+    .gallery-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 0.85rem;
+      padding: 1rem;
+    }
+
+    .gallery-card h3 {
+      font-size: 0.75rem;
+      margin-bottom: 1rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    .badge-collection-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.25rem;
+    }
+
+    /* Legendary Badge Centered Top */
+    .top-legendary-slot {
+      display: flex;
+      justify-content: center;
+      width: 100%;
+    }
+
+    /* 6x2 Compact Badge Grid */
+    .badge-grid-6x2 {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 0.8rem 0.3rem;
+      width: 100%;
+    }
+
+    /* Badge Item without container box */
+    .badge-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 0.2rem;
+      background: transparent;
+      border: none;
+    }
+
+    .badge-symbol {
+      font-size: 1.75rem;
+      line-height: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: filter 0.3s, transform 0.2s;
+    }
+
+    .badge-name {
+      font-size: 0.62rem;
+      font-weight: 600;
+      line-height: 1.15;
+      color: var(--text-muted);
+      word-break: break-word;
+      hyphens: auto;
+      max-width: 100%;
+    }
+
+    /* Unlocked Illuminated Visual Effects */
+    .badge-item.unlocked .badge-symbol {
+      transform: scale(1.05);
+    }
+
+    .badge-item.unlocked .badge-name {
+      color: var(--text-primary);
+      font-weight: 700;
+    }
+
+    .badge-item.unlocked.b-legendary .badge-symbol {
+      filter: drop-shadow(0 0 10px rgba(234, 179, 8, 0.9));
+      font-size: 2.2rem;
+    }
+
+    .badge-item.unlocked.b-ultra-rare .badge-symbol {
+      filter: drop-shadow(0 0 7px rgba(168, 85, 247, 0.85));
+    }
+
+    .badge-item.unlocked.b-rare .badge-symbol {
+      filter: drop-shadow(0 0 6px rgba(59, 130, 246, 0.85));
+    }
+
+    .badge-item.unlocked.b-common .badge-symbol {
+      filter: drop-shadow(0 0 5px rgba(148, 163, 184, 0.7));
+    }
+
+    /* Locked Grayscale Dimmed Visual Effects */
+    .badge-item.locked {
+      opacity: 0.25;
+      filter: grayscale(100%);
+    }
+
+    .badge-item.locked .badge-symbol {
+      filter: grayscale(100%);
     }
   </style>
 </head>
 <body>
 
-  <header>
-    <h1>⚡ Hoekedex</h1>
-    <div class="controls">
-      <input type="text" id="search" placeholder="Search by name...">
-      <select id="type-filter">
-        <option value="all">All Types</option>
-        <option value="fire">Fire</option>
-        <option value="water">Water</option>
-        <option value="grass">Grass</option>
-        <option value="electric">Electric</option>
-        <option value="psychic">Psychic</option>
-      </select>
-      <div class="view-btn-group">
-        <button id="view-grid" class="active">Grid</button>
-        <button id="view-list">List</button>
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="nav-logo">Tracker Hub</div>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="index.html">Catches</a>
+      <a href="stats.html" class="active">Stats</a>
+    </div>
+  </nav>
+
+  <main class="stats-container">
+
+    <!-- Player Level & EXP Section -->
+    <section class="level-card">
+      <div class="level-header">
+        <div>
+          <div class="level-title-label">Personal Rank</div>
+          <div class="level-badge" id="player-level">Level 1</div>
+        </div>
+        <div class="exp-counter" id="exp-display">0 / 10 EXP</div>
       </div>
-    </div>
-  </header>
+      <div class="exp-bar-bg">
+        <div class="exp-bar-fill" id="exp-bar"></div>
+      </div>
+    </section>
 
-  <main id="dex-container" class="dex-grid"></main>
+    <!-- Mobile Metric Rows (2-Line Layout) -->
+    <section class="metrics-section">
+      <!-- Line 1: Total Catches & Encounters -->
+      <div class="metric-row">
+        <div class="metric-card">
+          <div class="metric-label">Total Catches</div>
+          <div class="metric-value" id="stat-catches">0</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Total Encounters</div>
+          <div class="metric-value" id="stat-encounters">0</div>
+        </div>
+      </div>
 
-  <!-- Profile View Modal -->
-  <div class="modal-overlay" id="modal-overlay">
-    <div class="modal">
-      <button class="close-btn" id="close-modal">&times;</button>
-      <div id="modal-content"></div>
-    </div>
-  </div>
+      <!-- Line 2: Avg Stars & Badges Count -->
+      <div class="metric-row">
+        <div class="metric-card">
+          <div class="metric-label">Avg Star Rating</div>
+          <div class="star-rating-display" id="star-rating-container">☆☆☆☆☆</div>
+          <div class="star-score-sub" id="star-score-text">0.0 / 4.0 Stars</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Badges Count</div>
+          <div class="metric-value" id="stat-badge-count">0 / 13</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Race Breakdown Distribution -->
+    <section class="breakdown-card">
+      <h3>Race Breakdown Distribution</h3>
+      <div class="stacked-bar" id="race-bar"></div>
+      <div class="legend">
+        <div class="legend-item"><div class="legend-dot seg-human"></div> Human (<span id="cnt-human">0</span>)</div>
+        <div class="legend-item"><div class="legend-dot seg-elf"></div> Elf (<span id="cnt-elf">0</span>)</div>
+        <div class="legend-item"><div class="legend-dot seg-cyborg"></div> Cyborg (<span id="cnt-cyborg">0</span>)</div>
+      </div>
+    </section>
+
+    <!-- Hair Color Breakdown Distribution -->
+    <section class="breakdown-card">
+      <h3>Hair Color Breakdown Distribution</h3>
+      <div class="stacked-bar" id="hair-bar"></div>
+      <div class="legend">
+        <div class="legend-item"><div class="legend-dot seg-blonde"></div> Blonde (<span id="cnt-blonde">0</span>)</div>
+        <div class="legend-item"><div class="legend-dot seg-dark"></div> Dark (<span id="cnt-dark">0</span>)</div>
+        <div class="legend-item"><div class="legend-dot seg-silver"></div> Silver (<span id="cnt-silver">0</span>)</div>
+        <div class="legend-item"><div class="legend-dot seg-red"></div> Red (<span id="cnt-red">0</span>)</div>
+      </div>
+    </section>
+
+    <!-- Single Container Card Badge Gallery Grid -->
+    <section class="gallery-card">
+      <h3>Badge Collection Gallery</h3>
+      <div class="badge-collection-wrapper">
+        <!-- Legendary Badge Top Centered -->
+        <div class="top-legendary-slot" id="legendary-slot"></div>
+        
+        <!-- 6x2 Grid for 12 Remaining Badges -->
+        <div class="badge-grid-6x2" id="grid-6x2"></div>
+      </div>
+    </section>
+
+  </main>
 
   <script>
-    // Mock Data Dataset
-    const creatures = [
-      { id: '001', name: 'Pyronix', type: 'fire', hp: 60, atk: 85, def: 50, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/4.png', evo: 'Pyronix -> Ignisaur (Lvl 16)' },
-      { id: '002', name: 'Aquatail', type: 'water', hp: 70, atk: 55, def: 80, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/7.png', evo: 'Aquatail -> Hydrofin (Lvl 18)' },
-      { id: '003', name: 'Leafwing', type: 'grass', hp: 65, atk: 60, def: 60, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png', evo: 'Leafwing -> Floragon (Lvl 16)' },
-      { id: '004', name: 'Voltix', type: 'electric', hp: 45, atk: 90, def: 40, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/25.png', evo: 'Voltix -> Raichu (Stone)' },
-      { id: '005', name: 'Mindmeld', type: 'psychic', hp: 50, atk: 95, def: 45, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/63.png', evo: 'Mindmeld -> Alakazam (Trade)' }
+    // Config for 13 System Badges (1 Legendary, 4 Ultra-Rare, 4 Rare, 4 Common)
+    const BADGES_CONFIG = [
+      // Top Slot Badge
+      { name: "Apex Mastery 👑", rarity: "Legendary", exp: 20 },
+      
+      // 12 Grid Badges
+      { name: "Flawless Execution 💎", rarity: "Ultra-Rare", exp: 15 },
+      { name: "MVP Contender 🌟", rarity: "Ultra-Rare", exp: 15 },
+      { name: "Boss Slayer 🐉", rarity: "Ultra-Rare", exp: 15 },
+      { name: "Tactical Genius 🧠", rarity: "Ultra-Rare", exp: 15 },
+      
+      { name: "Critical Strike 💥", rarity: "Rare", exp: 10 },
+      { name: "First Blood ⚡", rarity: "Rare", exp: 10 },
+      { name: "Unshakable Shield 🛡️", rarity: "Rare", exp: 10 },
+      { name: "Speed Demon 🚀", rarity: "Rare", exp: 10 },
+      
+      { name: "Participant 🎖️", rarity: "Common", exp: 5 },
+      { name: "Team Player 🤝", rarity: "Common", exp: 5 },
+      { name: "Scout Duty 🔍", rarity: "Common", exp: 5 },
+      { name: "First Step 🐾", rarity: "Common", exp: 5 }
     ];
 
-    let favorites = JSON.parse(localStorage.getItem('hoekedex_favs')) || [];
-    let currentView = 'grid';
+    // Read characters roster from localStorage
+    const characters = JSON.parse(localStorage.getItem('roster_characters_v5')) || [];
 
-    const container = document.getElementById('dex-container');
-    const searchInput = document.getElementById('search');
-    const typeFilter = document.getElementById('type-filter');
-    const btnGrid = document.getElementById('view-grid');
-    const btnList = document.getElementById('view-list');
-    const modalOverlay = document.getElementById('modal-overlay');
-    const modalContent = document.getElementById('modal-content');
-    const closeModal = document.getElementById('close-modal');
-
-    // Filter & Render
-    function render() {
-      const query = searchInput.value.toLowerCase();
-      const selectedType = typeFilter.value;
-
-      const filtered = creatures.filter(c => {
-        const matchesName = c.name.toLowerCase().includes(query);
-        const matchesType = selectedType === 'all' || c.type === selectedType;
-        return matchesName && matchesType;
-      });
-
-      container.className = currentView === 'grid' ? 'dex-grid' : 'dex-list';
-      container.innerHTML = '';
-
-      filtered.forEach(c => {
-        const isFav = favorites.includes(c.id);
-        const card = document.createElement('div');
-        card.className = 'card';
-
-        if (currentView === 'grid') {
-          card.innerHTML = `
-            <button class="fav-btn ${isFav ? 'active' : ''}" onclick="toggleFav(event, '${c.id}')">★</button>
-            <span class="card-id">#${c.id}</span>
-            <div class="sprite-container">
-              <img class="sprite" src="${c.sprite}" alt="${c.name}">
-            </div>
-            <h3 class="card-title">${c.name}</h3>
-            <div class="badges">
-              <span class="badge badge-${c.type}">${c.type}</span>
-            </div>
-          `;
-        } else {
-          card.innerHTML = `
-            <div class="dex-list-left">
-              <button class="fav-btn ${isFav ? 'active' : ''}" onclick="toggleFav(event, '${c.id}')">★</button>
-              <span class="card-id">#${c.id}</span>
-              <div class="sprite-container">
-                <img class="sprite" src="${c.sprite}" alt="${c.name}">
-              </div>
-              <h3 class="card-title">${c.name}</h3>
-            </div>
-            <div class="badges">
-              <span class="badge badge-${c.type}">${c.type}</span>
-            </div>
-          `;
-        }
-
-        card.addEventListener('click', () => openProfile(c));
-        container.appendChild(card);
-      });
-    }
-
-    // Toggle Favorites Persistence
-    window.toggleFav = function(e, id) {
-      e.stopPropagation();
-      if (favorites.includes(id)) {
-        favorites = favorites.filter(favId => favId !== id);
-      } else {
-        favorites.push(id);
+    // Progressive Bracket Engine (Level 100 max = 10,000 EXP total)
+    function getExpThresholdForLevel(lvl) {
+      if (lvl <= 1) return 0;
+      let cumulative = 0;
+      for (let i = 1; i < lvl; i++) {
+        const bracket = Math.floor((i - 1) / 10);
+        const expForNext = 10 + (bracket * 20); // Incremental brackets per 10 levels
+        cumulative += expForNext;
       }
-      localStorage.setItem('hoekedex_favs', JSON.stringify(favorites));
-      render();
-    };
-
-    // Profile Modal View
-    function openProfile(creature) {
-      modalContent.innerHTML = `
-        <div style="text-align: center;">
-          <img src="${creature.sprite}" style="width: 120px; height: 120px;" alt="${creature.name}">
-          <h2 style="text-transform: capitalize; margin: 0.5rem 0;">${creature.name} (#${creature.id})</h2>
-          <span class="badge badge-${creature.type}">${creature.type}</span>
-          <p style="color: var(--text-sub); font-size: 0.85rem; margin-top: 0.75rem;"><strong>Evolution:</strong> ${creature.evo}</p>
-        </div>
-        <div class="stat-bar">
-          <div class="stat-row"><span>HP</span><span>${creature.hp}</span></div>
-          <div class="bar-bg"><div class="bar-fill" id="hp-bar"></div></div>
-          <div class="stat-row"><span>Attack</span><span>${creature.atk}</span></div>
-          <div class="bar-bg"><div class="bar-fill" id="atk-bar"></div></div>
-          <div class="stat-row"><span>Defense</span><span>${creature.def}</span></div>
-          <div class="bar-bg"><div class="bar-fill" id="def-bar"></div></div>
-        </div>
-      `;
-
-      modalOverlay.classList.add('active');
-
-      // Animate stat bars after render
-      setTimeout(() => {
-        document.getElementById('hp-bar').style.width = `${(creature.hp / 120) * 100}%`;
-        document.getElementById('atk-bar').style.width = `${(creature.atk / 120) * 100}%`;
-        document.getElementById('def-bar').style.width = `${(creature.def / 120) * 100}%`;
-      }, 50);
+      return cumulative;
     }
 
-    // Event Listeners
-    searchInput.addEventListener('input', render);
-    typeFilter.addEventListener('change', render);
+    function calculateLevelData(totalExp) {
+      let level = 1;
+      while (level < 100) {
+        const nextThreshold = getExpThresholdForLevel(level + 1);
+        if (totalExp >= nextThreshold) {
+          level++;
+        } else {
+          break;
+        }
+      }
 
-    btnGrid.addEventListener('click', () => {
-      currentView = 'grid';
-      btnGrid.classList.add('active');
-      btnList.classList.remove('active');
-      render();
-    });
+      const currentBase = getExpThresholdForLevel(level);
+      const nextBase = level >= 100 ? currentBase : getExpThresholdForLevel(level + 1);
+      const reqForThisLevel = nextBase - currentBase;
+      const progressInLevel = totalExp - currentBase;
+      const progressPercent = level >= 100 ? 100 : Math.min(100, Math.max(0, (progressInLevel / reqForThisLevel) * 100));
 
-    btnList.addEventListener('click', () => {
-      currentView = 'list';
-      btnList.classList.add('active');
-      btnGrid.classList.remove('active');
-      render();
-    });
+      return {
+        level,
+        currentBase,
+        nextBase,
+        reqForThisLevel,
+        progressInLevel,
+        progressPercent
+      };
+    }
 
-    closeModal.addEventListener('click', () => {
-      modalOverlay.classList.remove('active');
-    });
+    function getRarityClass(rarity) {
+      return rarity.toLowerCase().replace(' ', '-');
+    }
 
-    modalOverlay.addEventListener('click', (e) => {
-      if (e.target === modalOverlay) modalOverlay.classList.remove('active');
-    });
+    function generateStarString(score) {
+      const fullStars = Math.floor(score);
+      const hasHalf = (score - fullStars) >= 0.5;
+      const emptyStars = 4 - fullStars - (hasHalf ? 1 : 0);
 
-    // Initial render
-    render();
+      let starsHTML = '';
+      for (let i = 0; i < fullStars; i++) starsHTML += '★';
+      if (hasHalf) starsHTML += '½';
+      for (let i = 0; i < emptyStars; i++) starsHTML += '☆';
+
+      return starsHTML;
+    }
+
+    function extractBadgeSymbolAndTitle(badgeFullName) {
+      const parts = badgeFullName.trim().split(' ');
+      const symbol = parts.pop();
+      const nameOnly = parts.join(' ');
+      return { symbol, nameOnly };
+    }
+
+    function computeStats() {
+      const unlockedBadges = new Set();
+      let totalEncounters = 0;
+
+      const raceCounts = { Human: 0, Elf: 0, Cyborg: 0 };
+      const hairCounts = { Blonde: 0, Dark: 0, Silver: 0, Red: 0 };
+
+      const totalCatches = characters.length;
+      const avatarExp = totalCatches * 100; // 100 EXP per catch avatar
+
+      let badgeExp = 0;
+      let ratingScoresSum = 0;
+      const ratingMap = { 'Common': 1, 'Rare': 2, 'Ultra-Rare': 3, 'Legendary': 4 };
+
+      characters.forEach(c => {
+        if (raceCounts[c.race] !== undefined) raceCounts[c.race]++;
+        if (hairCounts[c.hair] !== undefined) hairCounts[c.hair]++;
+
+        if (c.logs) {
+          totalEncounters += c.logs.length;
+          let highestRarityVal = 0;
+
+          c.logs.forEach(log => {
+            if (log.badges) {
+              log.badges.forEach(badgeName => {
+                unlockedBadges.add(badgeName);
+                const conf = BADGES_CONFIG.find(b => b.name === badgeName);
+                if (conf && ratingMap[conf.rarity] > highestRarityVal) {
+                  highestRarityVal = ratingMap[conf.rarity];
+                }
+              });
+            }
+          });
+
+          ratingScoresSum += highestRarityVal;
+        }
+      });
+
+      // EXP calculation from unique unlocked badges
+      unlockedBadges.forEach(bName => {
+        const conf = BADGES_CONFIG.find(b => b.name === bName);
+        if (conf) badgeExp += conf.exp;
+      });
+
+      const encounterExp = totalEncounters * 5; // 5 EXP per encounter
+      const totalExp = avatarExp + badgeExp + encounterExp;
+
+      let avgStarScore = 0;
+      if (totalCatches > 0) {
+        avgStarScore = ratingScoresSum / totalCatches;
+      }
+
+      return {
+        totalCatches,
+        totalEncounters,
+        unlockedBadges,
+        totalExp,
+        raceCounts,
+        hairCounts,
+        avgStarScore
+      };
+    }
+
+    function renderPage() {
+      const stats = computeStats();
+      const levelData = calculateLevelData(stats.totalExp);
+
+      // Render Level & EXP Progress
+      document.getElementById('player-level').textContent = `Level ${levelData.level}`;
+      if (levelData.level >= 100) {
+        document.getElementById('exp-display').textContent = `10,000 / 10,000 EXP (MAX)`;
+      } else {
+        document.getElementById('exp-display').textContent = `${levelData.progressInLevel} / ${levelData.reqForThisLevel} EXP`;
+      }
+      document.getElementById('exp-bar').style.width = `${levelData.progressPercent}%`;
+
+      // Render Metrics
+      document.getElementById('stat-catches').textContent = stats.totalCatches;
+      document.getElementById('stat-encounters').textContent = stats.totalEncounters;
+      document.getElementById('stat-badge-count').textContent = `${stats.unlockedBadges.size} / ${BADGES_CONFIG.length}`;
+
+      // Star Rating
+      document.getElementById('star-rating-container').textContent = generateStarString(stats.avgStarScore);
+      document.getElementById('star-score-text').textContent = `${stats.avgStarScore.toFixed(1)} / 4.0 Avg Stars`;
+
+      // Render Race Breakdown Bar
+      document.getElementById('cnt-human').textContent = stats.raceCounts.Human;
+      document.getElementById('cnt-elf').textContent = stats.raceCounts.Elf;
+      document.getElementById('cnt-cyborg').textContent = stats.raceCounts.Cyborg;
+
+      const raceBar = document.getElementById('race-bar');
+      raceBar.innerHTML = '';
+      if (stats.totalCatches > 0) {
+        raceBar.innerHTML = `
+          <div class="bar-segment seg-human" style="width: ${(stats.raceCounts.Human / stats.totalCatches) * 100}%"></div>
+          <div class="bar-segment seg-elf" style="width: ${(stats.raceCounts.Elf / stats.totalCatches) * 100}%"></div>
+          <div class="bar-segment seg-cyborg" style="width: ${(stats.raceCounts.Cyborg / stats.totalCatches) * 100}%"></div>
+        `;
+      }
+
+      // Render Hair Color Breakdown Bar
+      document.getElementById('cnt-blonde').textContent = stats.hairCounts.Blonde;
+      document.getElementById('cnt-dark').textContent = stats.hairCounts.Dark;
+      document.getElementById('cnt-silver').textContent = stats.hairCounts.Silver;
+      document.getElementById('cnt-red').textContent = stats.hairCounts.Red;
+
+      const hairBar = document.getElementById('hair-bar');
+      hairBar.innerHTML = '';
+      if (stats.totalCatches > 0) {
+        hairBar.innerHTML = `
+          <div class="bar-segment seg-blonde" style="width: ${(stats.hairCounts.Blonde / stats.totalCatches) * 100}%"></div>
+          <div class="bar-segment seg-dark" style="width: ${(stats.hairCounts.Dark / stats.totalCatches) * 100}%"></div>
+          <div class="bar-segment seg-silver" style="width: ${(stats.hairCounts.Silver / stats.totalCatches) * 100}%"></div>
+          <div class="bar-segment seg-red" style="width: ${(stats.hairCounts.Red / stats.totalCatches) * 100}%"></div>
+        `;
+      }
+
+      // Render Single Card Badge Showcase
+      const legendarySlot = document.getElementById('legendary-slot');
+      const grid6x2 = document.getElementById('grid-6x2');
+      
+      legendarySlot.innerHTML = '';
+      grid6x2.innerHTML = '';
+
+      BADGES_CONFIG.forEach((badge, index) => {
+        const isUnlocked = stats.unlockedBadges.has(badge.name);
+        const rClass = getRarityClass(badge.rarity);
+        const { symbol, nameOnly } = extractBadgeSymbolAndTitle(badge.name);
+
+        const badgeElem = document.createElement('div');
+        badgeElem.className = `badge-item ${isUnlocked ? 'unlocked b-' + rClass : 'locked'}`;
+        
+        badgeElem.innerHTML = `
+          <div class="badge-symbol">${symbol}</div>
+          <div class="badge-name">${nameOnly}</div>
+        `;
+
+        // Index 0 is Legendary (Top Centered), remaining 12 go into 6x2 grid
+        if (index === 0) {
+          legendarySlot.appendChild(badgeElem);
+        } else {
+          grid6x2.appendChild(badgeElem);
+        }
+      });
+    }
+
+    // Initialize application logic on page load
+    window.onload = renderPage;
   </script>
 </body>
 </html>
