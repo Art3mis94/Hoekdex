@@ -382,9 +382,9 @@
   <nav class="navbar">
     <div class="nav-logo">Tracker Hub</div>
     <div class="nav-links">
-      <a href="#home">Home</a>
-      <a href="#catches">Catches</a>
-      <a href="#stats" class="active">Stats</a>
+      <a href="index.html">Home</a>
+      <a href="catches.html">Catches</a>
+      <a href="stats.html" class="active">Stats</a>
     </div>
   </nav>
 
@@ -470,14 +470,6 @@
   </main>
 
   <script>
-    // Navigation active state handler
-    document.querySelectorAll('.nav-links a').forEach(link => {
-      link.addEventListener('click', function() {
-        document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
-        this.classList.add('active');
-      });
-    });
-
     // Config for 13 System Badges (1 Legendary, 4 Ultra-Rare, 4 Rare, 4 Common)
     const BADGES_CONFIG = [
       // Top Slot Badge
