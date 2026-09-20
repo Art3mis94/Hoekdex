@@ -1,563 +1,692 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#ed3343" />
-  <title>Hoekedex – Home</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Tracker Hub</title>
   <style>
     :root {
-      --bg: #fff5f6;
-      --surface: #ffffff;
-      --surface-soft: #fffafb;
-      --text: #22202a;
-      --muted: #726c79;
-      --border: #f0dde0;
-      --red: #ed3343;
-      --red-dark: #cb1e2d;
-      --pink: #ffeff2;
-      --purple: #6d5dfc;
-      --gold: #f7ae2b;
-      --shadow: 0 14px 34px rgba(126, 32, 45, 0.10);
-      --radius: 20px;
+      --bg-dark: #090d16;
+      --bg-card: #151c2c;
+      --bg-hover: #1e293b;
+      --accent: #6366f1;
+      --accent-glow: rgba(99, 102, 241, 0.4);
+      --text-primary: #f8fafc;
+      --text-muted: #94a3b8;
+      --border: #243048;
+      --danger: #ef4444;
+      
+      --common: #94a3b8;
+      --rare: #3b82f6;
+      --ultra-rare: #a855f7;
+      --legendary: #eab308;
+      --star-gold: #f59e0b;
     }
 
-    * { box-sizing: border-box; }
-    html { scroll-behavior: smooth; }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
 
     body {
-      margin: 0;
-      min-width: 320px;
-      background:
-        radial-gradient(circle at 0% 0%, rgba(255, 222, 227, 0.85), transparent 28rem),
-        linear-gradient(180deg, #fffafa 0%, var(--bg) 60%, #fff 100%);
-      color: var(--text);
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      line-height: 1.45;
+      background-color: var(--bg-dark);
+      color: var(--text-primary);
+      padding: 0.75rem;
+      padding-bottom: 2rem;
+      min-height: 100vh;
+      max-width: 600px;
+      margin: 0 auto;
     }
 
-    .container { width: min(1160px, calc(100% - 40px)); margin: 0 auto; }
-
-    header {
-      position: sticky;
-      top: 0;
-      z-index: 50;
-      border-bottom: 1px solid rgba(240, 221, 224, 0.9);
-      background: rgba(255, 250, 250, 0.88);
-      backdrop-filter: blur(14px);
-    }
-
-    .nav {
+    /* Navigation Bar */
+    .navbar {
       display: flex;
-      align-items: center;
       justify-content: space-between;
-      gap: 20px;
-      min-height: 70px;
+      align-items: center;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      padding: 0.75rem 1rem;
+      border-radius: 0.85rem;
+      margin-bottom: 1rem;
     }
 
-    .logo {
-      color: var(--red);
-      font-size: 1.35rem;
-      font-weight: 900;
-      letter-spacing: -0.7px;
-      text-decoration: none;
-      white-space: nowrap;
+    .nav-logo {
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
     }
-
-    .logo span { color: var(--purple); }
 
     .nav-links {
       display: flex;
-      align-items: center;
-      gap: 8px;
-      margin: 0;
-      padding: 0;
-      list-style: none;
+      gap: 0.35rem;
     }
 
-    .nav-links a {
-      display: inline-flex;
-      padding: 9px 11px;
-      border-radius: 10px;
-      color: var(--muted);
-      font-size: 0.92rem;
+    .nav-btn {
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-muted);
+      font-weight: 600;
+      font-size: 0.85rem;
+      padding: 0.4rem 0.75rem;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .nav-btn:hover, .nav-btn.active {
+      color: var(--text-primary);
+      background: var(--bg-hover);
+    }
+
+    .nav-btn.active {
+      border-color: var(--accent);
+    }
+
+    /* Tab Views */
+    .tab-view {
+      display: none;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .tab-view.active {
+      display: flex;
+    }
+
+    /* Cards & Containers */
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 0.85rem;
+      padding: 1rem;
+    }
+
+    .card-title {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
       font-weight: 700;
-      text-decoration: none;
+      margin-bottom: 0.75rem;
     }
 
-    .nav-links a:hover,
-    .nav-links a[aria-current="page"] { background: var(--pink); color: var(--red-dark); }
-
-    main { padding: 24px 0 60px; }
-
-    .button {
+    /* Buttons */
+    .btn {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      padding: 0.6rem 1rem;
+      border-radius: 0.5rem;
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      min-height: 42px;
-      padding: 10px 14px;
-      border: 0;
-      border-radius: 12px;
-      background: var(--red);
-      box-shadow: 0 8px 18px rgba(206, 30, 44, 0.22);
-      color: #fff;
-      cursor: pointer;
-      font: inherit;
-      font-size: 0.9rem;
-      font-weight: 800;
-      text-decoration: none;
-      transition: transform 150ms ease, background 150ms ease;
+      gap: 0.4rem;
+      transition: background 0.2s;
     }
 
-    .button:hover { background: var(--red-dark); transform: translateY(-1px); }
+    .btn:hover {
+      opacity: 0.9;
+    }
 
-    /* Flip card */
-    .flip-card {
+    .btn-secondary {
+      background: var(--bg-hover);
+      color: var(--text-primary);
+      border: 1px solid var(--border);
+    }
+
+    .btn-danger {
+      background: var(--danger);
+    }
+
+    /* Character Cards */
+    .char-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .char-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 0.85rem;
+      padding: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .char-info h4 {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 0.25rem;
+    }
+
+    .char-tags {
+      display: flex;
+      gap: 0.4rem;
+    }
+
+    .tag {
+      font-size: 0.7rem;
+      padding: 0.15rem 0.4rem;
+      border-radius: 0.3rem;
+      background: var(--bg-hover);
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+    }
+
+    .char-actions {
+      display: flex;
+      gap: 0.4rem;
+    }
+
+    /* Modals */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      z-index: 100;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 0.85rem;
+      padding: 1.25rem;
       width: 100%;
-      height: 208px;
-      perspective: 1300px;
-      cursor: pointer;
+      max-width: 450px;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .modal-title {
+      font-size: 1.1rem;
+      font-weight: 800;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    .form-group label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .form-control {
+      background: var(--bg-dark);
+      border: 1px solid var(--border);
+      border-radius: 0.5rem;
+      padding: 0.6rem;
+      color: var(--text-primary);
+      font-size: 0.9rem;
       outline: none;
     }
 
-    .flip-card:focus-visible .flip-inner { box-shadow: 0 0 0 4px rgba(109, 93, 252, 0.3), 0 18px 38px rgba(188, 27, 43, 0.23); }
-
-    .flip-inner {
-      position: relative;
-      width: 100%;
-      height: 100%;
-      border-radius: 22px;
-      transform-style: preserve-3d;
-      transition: transform 650ms cubic-bezier(0.2, 0.75, 0.25, 1), box-shadow 200ms ease;
-      box-shadow: 0 18px 38px rgba(188, 27, 43, 0.23);
+    .form-control:focus {
+      border-color: var(--accent);
     }
 
-    .flip-card.is-flipped .flip-inner { transform: rotateY(180deg); }
-
-    .flip-face {
-      position: absolute;
-      inset: 0;
-      overflow: hidden;
-      border-radius: 22px;
-      backface-visibility: hidden;
-      -webkit-backface-visibility: hidden;
+    /* Badges Selection Grid */
+    .badge-select-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.4rem;
+      max-height: 150px;
+      overflow-y: auto;
+      border: 1px solid var(--border);
+      padding: 0.5rem;
+      border-radius: 0.5rem;
+      background: var(--bg-dark);
     }
 
-    /* Front: Field Explorer bar */
-    .flip-front {
-      isolation: isolate;
-      padding: 26px 32px 21px;
-      background: linear-gradient(110deg, #ef3748, #e91f2f);
-      color: #fff;
-    }
-
-    .flip-front::before,
-    .flip-front::after {
-      content: "";
-      position: absolute;
-      z-index: -1;
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 50%;
-      pointer-events: none;
-    }
-
-    .flip-front::before {
-      width: 255px;
-      height: 255px;
-      top: -149px;
-      right: -56px;
-      box-shadow: 0 110px 0 rgba(255, 255, 255, 0.035);
-    }
-
-    .flip-front::after {
-      width: 170px;
-      height: 170px;
-      right: -20px;
-      bottom: -122px;
-      box-shadow: 0 -82px 0 rgba(255, 255, 255, 0.028);
-    }
-
-    .level-top { display: flex; justify-content: space-between; gap: 28px; }
-
-    .trainer-title {
-      margin: 0 0 8px;
-      color: rgba(255, 255, 255, 0.79);
-      font-size: 0.9rem;
-      font-weight: 800;
-      letter-spacing: 0.045em;
-    }
-
-    .level-number {
-      margin: 0;
-      font-size: clamp(2.8rem, 5vw, 4rem);
-      font-weight: 900;
-      letter-spacing: -0.09em;
-      line-height: 0.9;
-    }
-
-    .level-number small { margin-right: 5px; font-size: 1.25rem; letter-spacing: 0; opacity: 0.82; vertical-align: 0.16em; }
-
-    .level-summary { min-width: 155px; padding-top: 2px; text-align: right; }
-    .summary-row { display: flex; align-items: baseline; justify-content: flex-end; gap: 11px; margin-bottom: 6px; }
-    .summary-row span:first-child { color: rgba(255, 255, 255, 0.78); font-size: 0.82rem; font-weight: 800; letter-spacing: 0.045em; }
-    .summary-row strong { font-size: 1.35rem; line-height: 1; }
-
-    .progress-area { margin-top: 25px; }
-    .progress-heading { display: flex; align-items: end; justify-content: space-between; gap: 18px; margin-bottom: 8px; }
-    .progress-heading span { color: rgba(255, 255, 255, 0.82); font-size: 0.82rem; font-weight: 800; letter-spacing: 0.055em; }
-    .progress-track { width: 100%; height: 11px; padding: 2px; overflow: hidden; border-radius: 999px; background: rgba(129, 0, 13, 0.56); box-shadow: inset 0 2px 4px rgba(80, 0, 8, 0.22); }
-    .progress-fill { width: 0; height: 100%; border-radius: inherit; background: #fff; transition: width 500ms ease; }
-
-    .flip-hint {
-      position: absolute;
-      right: 32px;
-      bottom: 12px;
-      color: rgba(255, 255, 255, 0.58);
-      font-size: 0.67rem;
-      font-weight: 800;
-      letter-spacing: 0.04em;
-    }
-
-    /* Back: compact stats dashboard */
-    .flip-back {
-      padding: 24px 28px;
-      transform: rotateY(180deg);
-      background: #fff;
-      color: var(--text);
-    }
-
-    .back-heading {
+    .badge-checkbox {
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      gap: 15px;
-      margin-bottom: 16px;
+      gap: 0.4rem;
+      font-size: 0.75rem;
+      cursor: pointer;
     }
 
-    .back-heading h2 { margin: 0; font-size: 1.25rem; letter-spacing: -0.4px; }
-    .back-heading p { margin: 3px 0 0; color: var(--muted); font-size: 0.78rem; }
-    .flip-icon { color: var(--purple); font-size: 1.25rem; }
-
-    .quick-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
-    .quick-stat { padding: 13px 9px; border: 1px solid #f1e4e6; border-radius: 13px; background: var(--surface-soft); text-align: center; }
-    .quick-stat span { display: block; margin-bottom: 3px; color: var(--muted); font-size: 0.72rem; font-weight: 700; }
-    .quick-stat strong { color: var(--purple); font-size: 1.25rem; }
-
-    .back-footer { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 16px; }
-    .back-footer small { color: var(--muted); font-size: 0.73rem; }
-    .back-footer a { color: var(--red-dark); font-size: 0.82rem; font-weight: 800; text-decoration: none; }
-
-    /* Menu-style link boxes */
-    .menu-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 18px;
-      margin-top: 20px;
-    }
-
-    .menu-card {
+    /* Metrics & Stats Page Elements */
+    .level-header {
       display: flex;
-      min-height: 168px;
-      flex-direction: column;
       justify-content: space-between;
-      padding: 28px;
-      border: 1px solid #e9e9ed;
-      border-radius: 20px;
-      background: #fff;
-      box-shadow: var(--shadow);
-      color: inherit;
-      text-decoration: none;
-      transition: border-color 150ms ease, box-shadow 150ms ease, transform 150ms ease;
+      align-items: flex-end;
     }
 
-    .menu-card:hover { border-color: rgba(237, 51, 67, 0.32); box-shadow: 0 18px 38px rgba(126, 32, 45, 0.14); transform: translateY(-2px); }
-    .menu-icon { display: grid; width: 55px; height: 55px; place-items: center; border-radius: 14px; background: #f5f5f7; color: #55565d; font-size: 1.7rem; }
-    .menu-card.tiers { border-color: #f2cbd0; }
-    .menu-card.tiers .menu-icon { background: #ffe0e5; color: var(--red); }
-    .menu-card h2 { margin: 25px 0 3px; font-size: 1.35rem; letter-spacing: -0.5px; }
-    .menu-card p { margin: 0; color: #77777d; font-size: 1rem; }
+    .level-badge {
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: var(--accent);
+    }
 
-    /* Recent catches stays at the bottom */
-    .recent-panel { margin-top: 20px; }
-    .panel-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 18px 18px 0; }
-    .panel-heading h2 { margin: 0; font-size: 1.12rem; }
-    .text-link { color: var(--red-dark); font-size: 0.86rem; font-weight: 800; text-decoration: none; }
-    .text-link:hover { text-decoration: underline; }
+    .exp-counter {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
 
-    .recent-grid {
+    .exp-bar-bg {
+      background: var(--bg-dark);
+      height: 10px;
+      border-radius: 5px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      margin-top: 0.5rem;
+    }
+
+    .exp-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), #a855f7);
+      width: 0%;
+      transition: width 0.4s ease;
+    }
+
+    .metric-row {
       display: grid;
-      grid-template-columns: repeat(5, minmax(100px, 1fr));
-      gap: 10px;
-      padding: 16px 18px 18px;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.6rem;
     }
 
-    .catch-card { min-width: 0; overflow: hidden; border: 1px solid #f1e4e6; border-radius: 13px; background: #fff; color: inherit; text-decoration: none; transition: border-color 150ms ease, box-shadow 150ms ease, transform 150ms ease; }
-    .catch-card:hover { border-color: rgba(237, 51, 67, 0.45); box-shadow: 0 8px 16px rgba(167, 38, 50, 0.10); transform: translateY(-2px); }
-    .catch-photo { display: grid; min-height: 112px; place-items: center; background: linear-gradient(135deg, #ffe4e9, #f1e8ff); color: #9b8190; font-size: 0.78rem; font-weight: 800; }
-    .catch-body { padding: 9px; }
-    .catch-name { overflow: hidden; margin-bottom: 4px; font-size: 0.9rem; font-weight: 900; text-overflow: ellipsis; white-space: nowrap; }
-    .catch-meta { display: flex; align-items: center; justify-content: space-between; gap: 5px; color: var(--muted); font-size: 0.72rem; }
-    .stars { color: var(--gold); letter-spacing: -1px; }
-
-    footer { padding: 22px 0 38px; color: var(--muted); font-size: 0.85rem; text-align: center; }
-
-    @media (max-width: 700px) {
-      .container { width: min(100% - 28px, 1160px); }
-      .nav { min-height: 62px; }
-      .nav-links { max-width: 70vw; overflow-x: auto; }
-      .nav-links a { padding: 8px; }
-      main { padding-top: 20px; }
-
-      .flip-card { height: 183px; }
-      .flip-front { padding: 21px 20px 17px; }
-      .trainer-title { margin-bottom: 6px; font-size: 0.78rem; }
-      .level-number { font-size: 2.8rem; }
-      .level-number small { font-size: 1rem; }
-      .level-summary { min-width: 112px; }
-      .summary-row { gap: 7px; margin-bottom: 5px; }
-      .summary-row span:first-child { font-size: 0.67rem; }
-      .summary-row strong { font-size: 1.12rem; }
-      .progress-area { margin-top: 20px; }
-      .progress-heading { margin-bottom: 7px; }
-      .progress-heading span { font-size: 0.68rem; letter-spacing: 0.03em; }
-      .progress-track { height: 10px; }
-      .flip-hint { right: 20px; bottom: 9px; font-size: 0.6rem; }
-
-      .flip-back { padding: 21px 20px; }
-      .back-heading { margin-bottom: 12px; }
-      .back-heading h2 { font-size: 1.05rem; }
-      .back-heading p { font-size: 0.69rem; }
-      .quick-stats { gap: 6px; }
-      .quick-stat { padding: 10px 5px; }
-      .quick-stat span { font-size: 0.61rem; }
-      .quick-stat strong { font-size: 1.05rem; }
-      .back-footer { margin-top: 12px; }
-      .back-footer small, .back-footer a { font-size: 0.67rem; }
-
-      .menu-grid { gap: 12px; margin-top: 14px; }
-      .menu-card { min-height: 135px; padding: 17px; border-radius: 17px; }
-      .menu-icon { width: 45px; height: 45px; border-radius: 12px; font-size: 1.35rem; }
-      .menu-card h2 { margin-top: 16px; font-size: 1rem; }
-      .menu-card p { font-size: 0.8rem; }
-
-      .recent-panel { margin-top: 14px; }
-      .recent-grid { display: flex; gap: 12px; overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; padding: 15px 18px 19px; scrollbar-width: none; }
-      .recent-grid::-webkit-scrollbar { display: none; }
-      .catch-card { flex: 0 0 145px; scroll-snap-align: start; border-radius: 15px; }
-      .catch-photo { min-height: 188px; font-size: 0.82rem; }
-      .catch-body { padding: 10px; }
-      .catch-name { font-size: 0.96rem; }
-      .catch-meta { align-items: start; flex-direction: column; gap: 2px; font-size: 0.73rem; }
+    .metric-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 0.75rem;
+      padding: 0.85rem 0.5rem;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
     }
 
-    @media (max-width: 460px) {
-      .nav-links { gap: 2px; }
-      .nav-links a { font-size: 0.8rem; }
-      .menu-card { min-height: 128px; }
-      .catch-card { flex-basis: 140px; }
+    .metric-value {
+      font-size: 1.35rem;
+      font-weight: 800;
     }
+
+    .metric-label {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .stacked-bar {
+      height: 14px;
+      border-radius: 7px;
+      background: var(--bg-dark);
+      display: flex;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      margin-bottom: 0.75rem;
+    }
+
+    .bar-segment { height: 100%; }
+    .seg-human { background: #ec4899; }
+    .seg-elf { background: #8b5cf6; }
+    .seg-cyborg { background: #06b6d4; }
+    .seg-blonde { background: #eab308; }
+    .seg-dark { background: #475569; }
+    .seg-silver { background: #cbd5e1; }
+    .seg-red { background: #f97316; }
+
+    .badge-collection-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .badge-grid-6x2 {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 0.6rem 0.2rem;
+      width: 100%;
+    }
+
+    .badge-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 0.2rem;
+    }
+
+    .badge-symbol { font-size: 1.5rem; }
+    .badge-name { font-size: 0.6rem; color: var(--text-muted); }
+    .badge-item.locked { opacity: 0.2; filter: grayscale(100%); }
+    .badge-item.unlocked .badge-name { color: var(--text-primary); font-weight: 700; }
   </style>
 </head>
 <body>
-  <header>
-    <div class="container nav">
-      <a class="logo" href="index.html">Hoe<span>k</span>edex</a>
-      <nav aria-label="Main navigation">
-        <ul class="nav-links">
-          <li><a href="index.html" aria-current="page">Home</a></li>
-          <li><a href="catches.html">Catches</a></li>
-          <li><a href="map.html">Map</a></li>
-          <li><a href="stats.html">Stats</a></li>
-          <li><a href="tiers.html">Tiers</a></li>
-        </ul>
-      </nav>
+
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="nav-logo">Tracker Hub</div>
+    <div class="nav-links">
+      <button class="nav-btn active" onclick="switchTab('home')">Home</button>
+      <button class="nav-btn" onclick="switchTab('catches')">Catches</button>
+      <button class="nav-btn" onclick="switchTab('stats')">Stats</button>
     </div>
-  </header>
+  </nav>
 
-  <main class="container">
-    <section
-      class="flip-card"
-      id="fieldExplorerCard"
-      tabindex="0"
-      role="button"
-      aria-label="Field Explorer. Press to view trainer stats."
-      aria-pressed="false"
-    >
-      <div class="flip-inner">
-        <!-- Front -->
-        <div class="flip-face flip-front">
-          <div class="level-top">
-            <div>
-              <p class="trainer-title">Field Explorer</p>
-              <p class="level-number"><small>Lv.</small><span id="levelValue">1</span></p>
-            </div>
-            <div class="level-summary">
-              <div class="summary-row"><span>Caught</span><strong id="caughtValue">0</strong></div>
-              <div class="summary-row"><span>Legendary</span><strong id="legendaryValue">0</strong></div>
-            </div>
-          </div>
-          <div class="progress-area">
-            <div class="progress-heading">
-              <span>Progress to Lv. <b id="nextLevelValue">2</b></span>
-              <span id="xpProgressText">0 / 35 XP</span>
-            </div>
-            <div class="progress-track" role="progressbar" aria-label="XP progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
-              <div class="progress-fill" id="progressFill"></div>
-            </div>
-          </div>
-          <span class="flip-hint">Tap to view trainer stats ↻</span>
-        </div>
+  <!-- HOME TAB -->
+  <section id="tab-home" class="tab-view active">
+    <div class="card">
+      <div class="card-title">Quick Actions</div>
+      <button class="btn" onclick="openAddModal()">+ Add New Catch</button>
+    </div>
+    <div class="card">
+      <div class="card-title">Recent Activity</div>
+      <div id="home-activity">No recent activity logged.</div>
+    </div>
+  </section>
 
-        <!-- Back -->
-        <div class="flip-face flip-back">
-          <div class="back-heading">
-            <div>
-              <h2>Trainer stats</h2>
-              <p>Your current field record</p>
-            </div>
-            <span class="flip-icon">↻</span>
-          </div>
-          <div class="quick-stats">
-            <div class="quick-stat"><span>Total caught</span><strong id="totalCaught">6</strong></div>
-            <div class="quick-stat"><span>Encounters</span><strong id="totalEncounters">12</strong></div>
-            <div class="quick-stat"><span>Average rating</span><strong id="averageRating">3.8★</strong></div>
-            <div class="quick-stat"><span>Total XP</span><strong id="totalXpValue">370</strong></div>
-          </div>
-          <div class="back-footer">
-            <small>Tap the card to return</small>
-            <a href="stats.html" onclick="event.stopPropagation()">Full stats →</a>
-          </div>
+  <!-- CATCHES TAB -->
+  <section id="tab-catches" class="tab-view">
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+      <h3 style="font-size: 1rem;">Character Roster</h3>
+      <button class="btn" onclick="openAddModal()">+ Add Character</button>
+    </div>
+    <div class="char-grid" id="char-roster"></div>
+  </section>
+
+  <!-- STATS TAB -->
+  <section id="tab-stats" class="tab-view">
+    <div class="card">
+      <div class="level-header">
+        <div>
+          <div class="card-title" style="margin-bottom:0.2rem;">Personal Rank</div>
+          <div class="level-badge" id="player-level">Level 1</div>
         </div>
+        <div class="exp-counter" id="exp-display">0 / 10 EXP</div>
       </div>
-    </section>
-
-    <!-- Menu boxes, similar to the supplied reference -->
-    <section class="menu-grid" aria-label="Main sections">
-      <a class="menu-card" href="catches.html">
-        <div class="menu-icon" aria-hidden="true">▦</div>
-        <div>
-          <h2>My Catches</h2>
-          <p><span id="menuCaught">6</span> logged</p>
-        </div>
-      </a>
-
-      <a class="menu-card" href="map.html">
-        <div class="menu-icon" aria-hidden="true">⌁</div>
-        <div>
-          <h2>Region Map</h2>
-          <p>All locations</p>
-        </div>
-      </a>
-
-      <a class="menu-card" href="stats.html">
-        <div class="menu-icon" aria-hidden="true">▥</div>
-        <div>
-          <h2>Trainer Stats</h2>
-          <p>Lv. <span id="menuLevel">1</span></p>
-        </div>
-      </a>
-
-      <a class="menu-card tiers" href="tiers.html">
-        <div class="menu-icon" aria-hidden="true">♜</div>
-        <div>
-          <h2>All Tiers</h2>
-          <p><span id="menuTypes">10</span> types</p>
-        </div>
-      </a>
-    </section>
-
-    <!-- Recent catches moved below the menu -->
-    <section class="panel recent-panel">
-      <div class="panel-heading">
-        <h2>Recently caught</h2>
-        <a class="text-link" href="catches.html">View all →</a>
+      <div class="exp-bar-bg">
+        <div class="exp-bar-fill" id="exp-bar"></div>
       </div>
-      <div class="recent-grid" id="recentCatches" aria-label="Swipe horizontally to browse recent catches">
-        <a class="catch-card" href="catches.html"><div class="catch-photo">Photo</div><div class="catch-body"><div class="catch-name">Alex</div><div class="catch-meta"><span>2 days ago</span><span class="stars">★★★★☆</span></div></div></a>
-        <a class="catch-card" href="catches.html"><div class="catch-photo">Photo</div><div class="catch-body"><div class="catch-name">Jamie</div><div class="catch-meta"><span>5 days ago</span><span class="stars">★★★☆☆</span></div></div></a>
-        <a class="catch-card" href="catches.html"><div class="catch-photo">Photo</div><div class="catch-body"><div class="catch-name">Sam</div><div class="catch-meta"><span>1 week ago</span><span class="stars">★★★★★</span></div></div></a>
-        <a class="catch-card" href="catches.html"><div class="catch-photo">Photo</div><div class="catch-body"><div class="catch-name">Taylor</div><div class="catch-meta"><span>2 weeks ago</span><span class="stars">★★★☆☆</span></div></div></a>
-        <a class="catch-card" href="catches.html"><div class="catch-photo">Photo</div><div class="catch-body"><div class="catch-name">Morgan</div><div class="catch-meta"><span>3 weeks ago</span><span class="stars">★★★★☆</span></div></div></a>
-      </div>
-    </section>
-  </main>
+    </div>
 
-  <footer><div class="container">Hoekedex dashboard · Private by design</div></footer>
+    <div class="metric-row">
+      <div class="metric-card">
+        <div class="metric-label">Catches</div>
+        <div class="metric-value" id="stat-catches">0</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Encounters</div>
+        <div class="metric-value" id="stat-encounters">0</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Race Distribution</div>
+      <div class="stacked-bar" id="race-bar"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Badge Showcase</div>
+      <div class="badge-collection-wrapper">
+        <div id="legendary-slot"></div>
+        <div class="badge-grid-6x2" id="grid-6x2"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ADD / EDIT CHARACTER MODAL -->
+  <div class="modal-overlay" id="char-modal">
+    <div class="modal">
+      <div class="modal-title" id="char-modal-title">Add Character</div>
+      <div class="form-group">
+        <label>Character Name</label>
+        <input type="text" id="char-name" class="form-control" placeholder="Enter name">
+      </div>
+      <div class="form-group">
+        <label>Race</label>
+        <select id="char-race" class="form-control">
+          <option value="Human">Human</option>
+          <option value="Elf">Elf</option>
+          <option value="Cyborg">Cyborg</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Hair Color</label>
+        <select id="char-hair" class="form-control">
+          <option value="Blonde">Blonde</option>
+          <option value="Dark">Dark</option>
+          <option value="Silver">Silver</option>
+          <option value="Red">Red</option>
+        </select>
+      </div>
+      <div style="display: flex; gap: 0.5rem; justify-content: flex-end; margin-top: 0.5rem;">
+        <button class="btn btn-secondary" onclick="closeModals()">Cancel</button>
+        <button class="btn" onclick="saveCharacter()">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- LOG ENCOUNTER MODAL -->
+  <div class="modal-overlay" id="log-modal">
+    <div class="modal">
+      <div class="modal-title">Log Encounter</div>
+      <div class="form-group">
+        <label>Star Rating (1 - 5)</label>
+        <select id="log-stars" class="form-control">
+          <option value="5">★★★★★ (5 Stars)</option>
+          <option value="4">★★★★☆ (4 Stars)</option>
+          <option value="3">★★★☆☆ (3 Stars)</option>
+          <option value="2">★★☆☆☆ (2 Stars)</option>
+          <option value="1">★☆☆☆☆ (1 Star)</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Earned Badges</label>
+        <div class="badge-select-grid" id="badge-options"></div>
+      </div>
+      <div style="display: flex; gap: 0.5rem; justify-content: flex-end;">
+        <button class="btn btn-secondary" onclick="closeModals()">Cancel</button>
+        <button class="btn" onclick="saveEncounterLog()">Log Encounter</button>
+      </div>
+    </div>
+  </div>
 
   <script>
-    const trainer = {
-      totalXp: 370,
-      caught: 6,
-      legendary: 3,
-      encounters: 12,
-      averageRating: 3.8
-    };
-
-    const XP_THRESHOLDS = [
-      0,
-      35, 70, 105, 145, 185, 225, 265, 310, 355, 400,
-      445, 495, 545, 595, 650, 705, 760, 815, 875, 935,
-      995, 1055, 1120, 1185, 1250, 1315, 1385, 1455, 1525, 1600,
-      1675, 1750, 1825, 1905, 1985, 2065, 2145, 2230, 2315, 2400,
-      2485, 2575, 2665, 2755, 2850, 2945, 3040, 3135, 3235, 3335,
-      3435, 3535, 3640, 3745, 3850, 3955, 4065, 4175, 4285, 4400,
-      4515, 4630, 4745, 4865, 4985, 5105, 5225, 5350, 5475, 5600,
-      5725, 5855, 5985, 6115, 6250, 6385, 6520, 6655, 6795, 6935,
-      7075, 7215, 7360, 7505, 7650, 7795, 7945, 8095, 8245, 8400,
-      8555, 8710, 8865, 9025, 9185, 9345, 9505, 9670, 9835, 10000
+    const BADGES = [
+      { name: "Apex Mastery 👑", rarity: "Legendary", exp: 20 },
+      { name: "Flawless Execution 💎", rarity: "Ultra-Rare", exp: 15 },
+      { name: "MVP Contender 🌟", rarity: "Ultra-Rare", exp: 15 },
+      { name: "Boss Slayer 🐉", rarity: "Ultra-Rare", exp: 15 },
+      { name: "Tactical Genius 🧠", rarity: "Ultra-Rare", exp: 15 },
+      { name: "Critical Strike 💥", rarity: "Rare", exp: 10 },
+      { name: "First Blood ⚡", rarity: "Rare", exp: 10 },
+      { name: "Unshakable Shield 🛡️", rarity: "Rare", exp: 10 },
+      { name: "Speed Demon 🚀", rarity: "Rare", exp: 10 },
+      { name: "Participant 🎖️", rarity: "Common", exp: 5 },
+      { name: "Team Player 🤝", rarity: "Common", exp: 5 },
+      { name: "Scout Duty 🔍", rarity: "Common", exp: 5 },
+      { name: "First Step 🐾", rarity: "Common", exp: 5 }
     ];
 
-    const MAX_LEVEL = 100;
+    let characters = JSON.parse(localStorage.getItem('roster_characters_v6')) || [];
+    let activeCharId = null;
 
-    function getLevelFromXp(totalXp) {
-      let level = 1;
-      while (level < MAX_LEVEL && totalXp >= XP_THRESHOLDS[level + 1]) level += 1;
-      return level;
+    function saveToStorage() {
+      localStorage.setItem('roster_characters_v6', JSON.stringify(characters));
+      renderRoster();
+      renderStats();
     }
 
-    function renderDashboard(data) {
-      const level = getLevelFromXp(data.totalXp);
-      const atMaxLevel = level === MAX_LEVEL;
-      const currentThreshold = XP_THRESHOLDS[level];
-      const nextThreshold = atMaxLevel ? currentThreshold : XP_THRESHOLDS[level + 1];
-      const xpWithinLevel = Math.max(0, data.totalXp - currentThreshold);
-      const xpNeededForLevel = Math.max(0, nextThreshold - currentThreshold);
-      const progressPercent = atMaxLevel ? 100 : Math.min(100, (xpWithinLevel / xpNeededForLevel) * 100);
+    function switchTab(tabName) {
+      document.querySelectorAll('.tab-view').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
 
-      document.getElementById('levelValue').textContent = level;
-      document.getElementById('menuLevel').textContent = level;
-      document.getElementById('nextLevelValue').textContent = atMaxLevel ? 'MAX' : level + 1;
-      document.getElementById('caughtValue').textContent = data.caught;
-      document.getElementById('menuCaught').textContent = data.caught;
-      document.getElementById('legendaryValue').textContent = data.legendary;
-      document.getElementById('totalCaught').textContent = data.caught;
-      document.getElementById('totalEncounters').textContent = data.encounters;
-      document.getElementById('averageRating').textContent = `${data.averageRating.toFixed(1)}★`;
-      document.getElementById('totalXpValue').textContent = data.totalXp.toLocaleString();
+      document.getElementById(`tab-${tabName}`).classList.add('active');
+      event.target.classList.add('active');
 
-      document.getElementById('xpProgressText').textContent = atMaxLevel
-        ? `${data.totalXp.toLocaleString()} XP · MAX LEVEL`
-        : `${xpWithinLevel} / ${xpNeededForLevel} XP`;
-      document.getElementById('progressFill').style.width = `${progressPercent}%`;
-      document.querySelector('.progress-track').setAttribute('aria-valuenow', progressPercent.toFixed(1));
+      if (tabName === 'stats') renderStats();
     }
 
-    const fieldExplorerCard = document.getElementById('fieldExplorerCard');
-
-    function toggleFlip() {
-      const flipped = fieldExplorerCard.classList.toggle('is-flipped');
-      fieldExplorerCard.setAttribute('aria-pressed', String(flipped));
+    function openAddModal() {
+      activeCharId = null;
+      document.getElementById('char-modal-title').textContent = "Add Character";
+      document.getElementById('char-name').value = '';
+      document.getElementById('char-modal').classList.add('active');
     }
 
-    fieldExplorerCard.addEventListener('click', toggleFlip);
-    fieldExplorerCard.addEventListener('keydown', (event) => {
-      if (event.key === 'Enter' || event.key === ' ') {
-        event.preventDefault();
-        toggleFlip();
+    function closeModals() {
+      document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('active'));
+    }
+
+    function saveCharacter() {
+      const name = document.getElementById('char-name').value.trim();
+      const race = document.getElementById('char-race').value;
+      const hair = document.getElementById('char-hair').value;
+
+      if (!name) return alert("Enter a character name");
+
+      if (activeCharId) {
+        const char = characters.find(c => c.id === activeCharId);
+        if (char) { char.name = name; char.race = race; char.hair = hair; }
+      } else {
+        characters.push({ id: Date.now(), name, race, hair, logs: [] });
       }
-    });
 
-    renderDashboard(trainer);
+      closeModals();
+      saveToStorage();
+    }
+
+    function renderRoster() {
+      const rosterContainer = document.getElementById('char-roster');
+      rosterContainer.innerHTML = '';
+
+      if (characters.length === 0) {
+        rosterContainer.innerHTML = '<div style="color:var(--text-muted); text-align:center; padding:2rem 0;">No characters captured yet.</div>';
+        return;
+      }
+
+      characters.forEach(c => {
+        const div = document.createElement('div');
+        div.className = 'char-card';
+        div.innerHTML = `
+          <div class="char-info">
+            <h4>${c.name}</h4>
+            <div class="char-tags">
+              <span class="tag">${c.race}</span>
+              <span class="tag">${c.hair}</span>
+              <span class="tag">${(c.logs || []).length} Encounters</span>
+            </div>
+          </div>
+          <div class="char-actions">
+            <button class="btn btn-secondary" onclick="openLogModal(${c.id})">+ Log</button>
+            <button class="btn btn-danger" onclick="deleteChar(${c.id})">✕</button>
+          </div>
+        `;
+        rosterContainer.appendChild(div);
+      });
+    }
+
+    function deleteChar(id) {
+      if (confirm("Delete this character?")) {
+        characters = characters.filter(c => c.id !== id);
+        saveToStorage();
+      }
+    }
+
+    function openLogModal(id) {
+      activeCharId = id;
+      const optionsContainer = document.getElementById('badge-options');
+      optionsContainer.innerHTML = '';
+
+      BADGES.forEach(b => {
+        optionsContainer.innerHTML += `
+          <label class="badge-checkbox">
+            <input type="checkbox" value="${b.name}"> ${b.name}
+          </label>
+        `;
+      });
+
+      document.getElementById('log-modal').classList.add('active');
+    }
+
+    function saveEncounterLog() {
+      const stars = parseInt(document.getElementById('log-stars').value);
+      const selectedBadges = Array.from(document.querySelectorAll('#badge-options input:checked')).map(cb => cb.value);
+
+      const char = characters.find(c => c.id === activeCharId);
+      if (char) {
+        if (!char.logs) char.logs = [];
+        char.logs.push({ stars, badges: selectedBadges, timestamp: Date.now() });
+      }
+
+      closeModals();
+      saveToStorage();
+    }
+
+    function renderStats() {
+      let totalEncounters = 0;
+      let unlockedBadges = new Set();
+      let raceCounts = { Human: 0, Elf: 0, Cyborg: 0 };
+
+      characters.forEach(c => {
+        if (raceCounts[c.race] !== undefined) raceCounts[c.race]++;
+        (c.logs || []).forEach(l => {
+          totalEncounters++;
+          (l.badges || []).forEach(b => unlockedBadges.add(b));
+        });
+      });
+
+      document.getElementById('stat-catches').textContent = characters.length;
+      document.getElementById('stat-encounters').textContent = totalEncounters;
+
+      // Badge Grid
+      const grid = document.getElementById('grid-6x2');
+      const legSlot = document.getElementById('legendary-slot');
+      grid.innerHTML = ''; legSlot.innerHTML = '';
+
+      BADGES.forEach((b, idx) => {
+        const isUnlocked = unlockedBadges.has(b.name);
+        const parts = b.name.split(' ');
+        const symbol = parts.pop();
+        const name = parts.join(' ');
+
+        const elem = document.createElement('div');
+        elem.className = `badge-item ${isUnlocked ? 'unlocked' : 'locked'}`;
+        elem.innerHTML = `<div class="badge-symbol">${symbol}</div><div class="badge-name">${name}</div>`;
+
+        if (idx === 0) legSlot.appendChild(elem);
+        else grid.appendChild(elem);
+      });
+    }
+
+    // Init
+    renderRoster();
+    renderStats();
   </script>
 </body>
 </html>
