@@ -50,9 +50,6 @@
       padding: 0.75rem 1rem;
       border-radius: 0.85rem;
       margin-bottom: 1rem;
-      position: sticky;
-      top: 0.75rem;
-      z-index: 100;
     }
 
     .nav-logo {
@@ -76,7 +73,6 @@
       padding: 0.4rem 0.75rem;
       border-radius: 0.5rem;
       transition: all 0.2s;
-      cursor: pointer;
     }
 
     .nav-links a:hover, .nav-links a.active {
@@ -88,86 +84,11 @@
       border: 1px solid var(--accent);
     }
 
-    /* Page View Visibility Controls */
-    .page-view {
-      display: none;
-    }
-
-    .page-view.active-view {
-      display: block;
-    }
-
     /* Main Container Grid */
     .stats-container {
       display: flex;
       flex-direction: column;
       gap: 1rem;
-    }
-
-    /* Generic Content Cards for Home and Catches */
-    .content-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: 0.85rem;
-      padding: 1.25rem;
-      margin-bottom: 1rem;
-    }
-
-    .content-card h2 {
-      font-size: 1.2rem;
-      color: var(--text-primary);
-      margin-bottom: 0.5rem;
-    }
-
-    .content-card p {
-      font-size: 0.9rem;
-      color: var(--text-muted);
-      line-height: 1.5;
-    }
-
-    /* Form Controls for Catches Interface */
-    .catch-form {
-      display: flex;
-      flex-direction: column;
-      gap: 0.8rem;
-      margin-top: 1rem;
-    }
-
-    .form-group {
-      display: flex;
-      flex-direction: column;
-      gap: 0.3rem;
-    }
-
-    .form-group label {
-      font-size: 0.75rem;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      font-weight: 700;
-    }
-
-    .form-control {
-      background: var(--bg-dark);
-      border: 1px solid var(--border);
-      color: var(--text-primary);
-      padding: 0.6rem;
-      border-radius: 0.5rem;
-      font-size: 0.9rem;
-    }
-
-    .btn-primary {
-      background: var(--accent);
-      color: white;
-      border: none;
-      padding: 0.75rem;
-      border-radius: 0.5rem;
-      font-weight: 700;
-      cursor: pointer;
-      transition: opacity 0.2s;
-    }
-
-    .btn-primary:hover {
-      opacity: 0.9;
     }
 
     /* Level & EXP Card */
@@ -461,144 +382,92 @@
   <nav class="navbar">
     <div class="nav-logo">Tracker Hub</div>
     <div class="nav-links">
-      <a href="#home" class="nav-btn" data-target="home-view">Home</a>
-      <a href="#catches" class="nav-btn" data-target="catches-view">Catches</a>
-      <a href="#stats" class="nav-btn active" data-target="stats-view">Stats</a>
+      <a href="index.html">Home</a>
+      <a href="catches.html">Catches</a>
+      <a href="stats.html" class="active">Stats</a>
     </div>
   </nav>
 
-  <!-- HOME VIEW -->
-  <section id="home-view" class="page-view">
-    <div class="content-card">
-      <h2>Welcome to Tracker Hub</h2>
-      <p>Track your caught characters, record combat encounters, earn unique badges, and monitor your personal level growth in real-time.</p>
-    </div>
-  </section>
+  <main class="stats-container">
 
-  <!-- CATCHES VIEW -->
-  <section id="catches-view" class="page-view">
-    <div class="content-card">
-      <h2>Add New Catch</h2>
-      <p>Log a character catch to increase your stats and gain overall experience.</p>
-      
-      <form class="catch-form" id="add-catch-form">
-        <div class="form-group">
-          <label for="catch-race">Race</label>
-          <select id="catch-race" class="form-control">
-            <option value="Human">Human</option>
-            <option value="Elf">Elf</option>
-            <option value="Cyborg">Cyborg</option>
-          </select>
+    <!-- Player Level & EXP Section -->
+    <section class="level-card">
+      <div class="level-header">
+        <div>
+          <div class="level-title-label">Personal Rank</div>
+          <div class="level-badge" id="player-level">Level 1</div>
         </div>
+        <div class="exp-counter" id="exp-display">0 / 10 EXP</div>
+      </div>
+      <div class="exp-bar-bg">
+        <div class="exp-bar-fill" id="exp-bar"></div>
+      </div>
+    </section>
 
-        <div class="form-group">
-          <label for="catch-hair">Hair Color</label>
-          <select id="catch-hair" class="form-control">
-            <option value="Blonde">Blonde</option>
-            <option value="Dark">Dark</option>
-            <option value="Silver">Silver</option>
-            <option value="Red">Red</option>
-          </select>
+    <!-- Mobile Metric Rows (2-Line Layout) -->
+    <section class="metrics-section">
+      <!-- Line 1: Total Catches & Encounters -->
+      <div class="metric-row">
+        <div class="metric-card">
+          <div class="metric-label">Total Catches</div>
+          <div class="metric-value" id="stat-catches">0</div>
         </div>
-
-        <div class="form-group">
-          <label for="catch-badge">Award Badge</label>
-          <select id="catch-badge" class="form-control">
-            <option value="Participant 🎖️">Participant 🎖️ (Common)</option>
-            <option value="First Blood ⚡">First Blood ⚡ (Rare)</option>
-            <option value="Flawless Execution 💎">Flawless Execution 💎 (Ultra-Rare)</option>
-            <option value="Apex Mastery 👑">Apex Mastery 👑 (Legendary)</option>
-          </select>
+        <div class="metric-card">
+          <div class="metric-label">Total Encounters</div>
+          <div class="metric-value" id="stat-encounters">0</div>
         </div>
+      </div>
 
-        <button type="submit" class="btn-primary">Log Catch (+100 EXP)</button>
-      </form>
-    </div>
-  </section>
-
-  <!-- STATS VIEW -->
-  <section id="stats-view" class="page-view active-view">
-    <main class="stats-container">
-
-      <!-- Player Level & EXP Section -->
-      <section class="level-card">
-        <div class="level-header">
-          <div>
-            <div class="level-title-label">Personal Rank</div>
-            <div class="level-badge" id="player-level">Level 1</div>
-          </div>
-          <div class="exp-counter" id="exp-display">0 / 10 EXP</div>
+      <!-- Line 2: Avg Stars & Badges Count -->
+      <div class="metric-row">
+        <div class="metric-card">
+          <div class="metric-label">Avg Star Rating</div>
+          <div class="star-rating-display" id="star-rating-container">☆☆☆☆☆</div>
+          <div class="star-score-sub" id="star-score-text">0.0 / 4.0 Stars</div>
         </div>
-        <div class="exp-bar-bg">
-          <div class="exp-bar-fill" id="exp-bar"></div>
+        <div class="metric-card">
+          <div class="metric-label">Badges Count</div>
+          <div class="metric-value" id="stat-badge-count">0 / 13</div>
         </div>
-      </section>
+      </div>
+    </section>
 
-      <!-- Mobile Metric Rows (2-Line Layout) -->
-      <section class="metrics-section">
-        <!-- Line 1: Total Catches & Encounters -->
-        <div class="metric-row">
-          <div class="metric-card">
-            <div class="metric-label">Total Catches</div>
-            <div class="metric-value" id="stat-catches">0</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-label">Total Encounters</div>
-            <div class="metric-value" id="stat-encounters">0</div>
-          </div>
-        </div>
+    <!-- Race Breakdown Distribution -->
+    <section class="breakdown-card">
+      <h3>Race Breakdown Distribution</h3>
+      <div class="stacked-bar" id="race-bar"></div>
+      <div class="legend">
+        <div class="legend-item"><div class="legend-dot seg-human"></div> Human (<span id="cnt-human">0</span>)</div>
+        <div class="legend-item"><div class="legend-dot seg-elf"></div> Elf (<span id="cnt-elf">0</span>)</div>
+        <div class="legend-item"><div class="legend-dot seg-cyborg"></div> Cyborg (<span id="cnt-cyborg">0</span>)</div>
+      </div>
+    </section>
 
-        <!-- Line 2: Avg Stars & Badges Count -->
-        <div class="metric-row">
-          <div class="metric-card">
-            <div class="metric-label">Avg Star Rating</div>
-            <div class="star-rating-display" id="star-rating-container">☆☆☆☆☆</div>
-            <div class="star-score-sub" id="star-score-text">0.0 / 4.0 Stars</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-label">Badges Count</div>
-            <div class="metric-value" id="stat-badge-count">0 / 13</div>
-          </div>
-        </div>
-      </section>
+    <!-- Hair Color Breakdown Distribution -->
+    <section class="breakdown-card">
+      <h3>Hair Color Breakdown Distribution</h3>
+      <div class="stacked-bar" id="hair-bar"></div>
+      <div class="legend">
+        <div class="legend-item"><div class="legend-dot seg-blonde"></div> Blonde (<span id="cnt-blonde">0</span>)</div>
+        <div class="legend-item"><div class="legend-dot seg-dark"></div> Dark (<span id="cnt-dark">0</span>)</div>
+        <div class="legend-item"><div class="legend-dot seg-silver"></div> Silver (<span id="cnt-silver">0</span>)</div>
+        <div class="legend-item"><div class="legend-dot seg-red"></div> Red (<span id="cnt-red">0</span>)</div>
+      </div>
+    </section>
 
-      <!-- Race Breakdown Distribution -->
-      <section class="breakdown-card">
-        <h3>Race Breakdown Distribution</h3>
-        <div class="stacked-bar" id="race-bar"></div>
-        <div class="legend">
-          <div class="legend-item"><div class="legend-dot seg-human"></div> Human (<span id="cnt-human">0</span>)</div>
-          <div class="legend-item"><div class="legend-dot seg-elf"></div> Elf (<span id="cnt-elf">0</span>)</div>
-          <div class="legend-item"><div class="legend-dot seg-cyborg"></div> Cyborg (<span id="cnt-cyborg">0</span>)</div>
-        </div>
-      </section>
+    <!-- Single Container Card Badge Gallery Grid -->
+    <section class="gallery-card">
+      <h3>Badge Collection Gallery</h3>
+      <div class="badge-collection-wrapper">
+        <!-- Legendary Badge Top Centered -->
+        <div class="top-legendary-slot" id="legendary-slot"></div>
+        
+        <!-- 6x2 Grid for 12 Remaining Badges -->
+        <div class="badge-grid-6x2" id="grid-6x2"></div>
+      </div>
+    </section>
 
-      <!-- Hair Color Breakdown Distribution -->
-      <section class="breakdown-card">
-        <h3>Hair Color Breakdown Distribution</h3>
-        <div class="stacked-bar" id="hair-bar"></div>
-        <div class="legend">
-          <div class="legend-item"><div class="legend-dot seg-blonde"></div> Blonde (<span id="cnt-blonde">0</span>)</div>
-          <div class="legend-item"><div class="legend-dot seg-dark"></div> Dark (<span id="cnt-dark">0</span>)</div>
-          <div class="legend-item"><div class="legend-dot seg-silver"></div> Silver (<span id="cnt-silver">0</span>)</div>
-          <div class="legend-item"><div class="legend-dot seg-red"></div> Red (<span id="cnt-red">0</span>)</div>
-        </div>
-      </section>
-
-      <!-- Single Container Card Badge Gallery Grid -->
-      <section class="gallery-card">
-        <h3>Badge Collection Gallery</h3>
-        <div class="badge-collection-wrapper">
-          <!-- Legendary Badge Top Centered -->
-          <div class="top-legendary-slot" id="legendary-slot"></div>
-          
-          <!-- 6x2 Grid for 12 Remaining Badges -->
-          <div class="badge-grid-6x2" id="grid-6x2"></div>
-        </div>
-      </section>
-
-    </main>
-  </section>
+  </main>
 
   <script>
     // Config for 13 System Badges (1 Legendary, 4 Ultra-Rare, 4 Rare, 4 Common)
@@ -623,55 +492,8 @@
       { name: "First Step 🐾", rarity: "Common", exp: 5 }
     ];
 
-    // Navigation Switcher Logic
-    function switchTab(targetId) {
-      document.querySelectorAll('.page-view').forEach(view => {
-        view.classList.remove('active-view');
-      });
-      
-      document.querySelectorAll('.nav-links a').forEach(link => {
-        link.classList.remove('active');
-      });
-
-      const activeView = document.getElementById(targetId);
-      if (activeView) {
-        activeView.classList.add('active-view');
-      }
-
-      const activeBtn = document.querySelector(`.nav-links a[data-target="${targetId}"]`);
-      if (activeBtn) {
-        activeBtn.classList.add('active');
-      }
-
-      if (targetId === 'stats-view') {
-        renderPage();
-      }
-    }
-
-    // Bind Navigation Click Handlers
-    document.querySelectorAll('.nav-links a').forEach(link => {
-      link.addEventListener('click', (e) => {
-        e.preventDefault();
-        const targetId = link.getAttribute('data-target');
-        switchTab(targetId);
-        window.location.hash = link.getAttribute('href');
-      });
-    });
-
-    // Handle Hash Navigation on load or back/forward actions
-    function handleHashRoute() {
-      const hash = window.location.hash;
-      if (hash === '#home') switchTab('home-view');
-      else if (hash === '#catches') switchTab('catches-view');
-      else switchTab('stats-view');
-    }
-
-    window.addEventListener('hashchange', handleHashRoute);
-
     // Read characters roster from localStorage
-    function getCharacters() {
-      return JSON.parse(localStorage.getItem('roster_characters_v5')) || [];
-    }
+    const characters = JSON.parse(localStorage.getItem('roster_characters_v5')) || [];
 
     // Progressive Bracket Engine (Level 100 max = 10,000 EXP total)
     function getExpThresholdForLevel(lvl) {
@@ -737,7 +559,6 @@
     }
 
     function computeStats() {
-      const characters = getCharacters();
       const unlockedBadges = new Set();
       let totalEncounters = 0;
 
@@ -874,6 +695,7 @@
           <div class="badge-name">${nameOnly}</div>
         `;
 
+        // Index 0 is Legendary (Top Centered), remaining 12 go into 6x2 grid
         if (index === 0) {
           legendarySlot.appendChild(badgeElem);
         } else {
@@ -882,35 +704,8 @@
       });
     }
 
-    // Form logic to record new catches
-    document.getElementById('add-catch-form').addEventListener('submit', function(e) {
-      e.preventDefault();
-      const race = document.getElementById('catch-race').value;
-      const hair = document.getElementById('catch-hair').value;
-      const selectedBadge = document.getElementById('catch-badge').value;
-
-      const characters = getCharacters();
-      characters.push({
-        id: Date.now(),
-        race: race,
-        hair: hair,
-        logs: [
-          {
-            id: Date.now(),
-            badges: [selectedBadge]
-          }
-        ]
-      });
-
-      localStorage.setItem('roster_characters_v5', JSON.stringify(characters));
-      switchTab('stats-view');
-      window.location.hash = '#stats';
-    });
-
-    // Initialize application routing on load
-    window.onload = function() {
-      handleHashRoute();
-    };
+    // Initialize application logic on page load
+    window.onload = renderPage;
   </script>
 </body>
 </html>
