@@ -3,39 +3,41 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Catches - Roster Tracker</title>
+  <title>Player Stats & Badge Collection</title>
   <style>
     :root {
-      --bg-dark: #0f172a;
-      --bg-card: #1e293b;
-      --bg-hover: #334155;
+      --bg-dark: #090d16;
+      --bg-card: #151c2c;
+      --bg-hover: #1e293b;
       --accent: #6366f1;
-      --accent-hover: #4f46e5;
-      --danger: #ef4444;
-      --danger-hover: #dc2626;
+      --accent-glow: rgba(99, 102, 241, 0.4);
       --text-primary: #f8fafc;
       --text-muted: #94a3b8;
-      --border: #334155;
-      --star-color: #f59e0b;
+      --border: #243048;
       
       --common: #94a3b8;
       --rare: #3b82f6;
       --ultra-rare: #a855f7;
       --legendary: #eab308;
+      --star-gold: #f59e0b;
     }
 
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      -webkit-tap-highlight-color: transparent;
     }
 
     body {
       background-color: var(--bg-dark);
       color: var(--text-primary);
-      padding: 1rem;
+      padding: 0.75rem;
+      padding-bottom: 2rem;
       min-height: 100vh;
+      max-width: 600px;
+      margin: 0 auto;
     }
 
     /* Navigation Bar */
@@ -46,7 +48,7 @@
       background: var(--bg-card);
       border: 1px solid var(--border);
       padding: 0.75rem 1rem;
-      border-radius: 0.75rem;
+      border-radius: 0.85rem;
       margin-bottom: 1rem;
     }
 
@@ -60,7 +62,7 @@
 
     .nav-links {
       display: flex;
-      gap: 0.5rem;
+      gap: 0.35rem;
     }
 
     .nav-links a {
@@ -82,1180 +84,636 @@
       border: 1px solid var(--accent);
     }
 
-    header {
+    /* Main Container Grid */
+    .stats-container {
       display: flex;
       flex-direction: column;
       gap: 1rem;
-      margin-bottom: 1.25rem;
     }
 
-    .top-bar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    .stats-header {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-    }
-
-    .stats-header h1 {
-      font-size: 1.3rem;
-      font-weight: 800;
-    }
-
-    .stat-badge {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      padding: 0.4rem 0.75rem;
-      border-radius: 0.5rem;
-      font-size: 0.8rem;
-      color: var(--text-muted);
-      white-space: nowrap;
-    }
-
-    .stat-badge strong {
-      color: var(--accent);
-      font-size: 0.95rem;
-    }
-
-    .btn-primary {
-      background: var(--accent);
-      color: var(--text-primary);
-      border: none;
-      font-weight: 700;
-      padding: 0.5rem 0.85rem;
-      border-radius: 0.5rem;
-      cursor: pointer;
-      font-size: 0.85rem;
-      transition: background 0.2s;
-      white-space: nowrap;
-    }
-
-    .btn-primary:hover {
-      background: var(--accent-hover);
-    }
-
-    .filter-bar {
-      display: flex;
-      flex-direction: column;
-      gap: 0.6rem;
-      background: var(--bg-card);
-      padding: 0.85rem;
-      border-radius: 0.75rem;
-      border: 1px solid var(--border);
-    }
-
-    .filter-row {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 0.5rem;
-    }
-
-    input, select, textarea {
-      background: var(--bg-dark);
-      border: 1px solid var(--border);
-      color: var(--text-primary);
-      padding: 0.5rem 0.6rem;
-      border-radius: 0.5rem;
-      outline: none;
-      font-size: 0.85rem;
-      width: 100%;
-    }
-
-    .search-row {
-      display: flex;
-      gap: 0.5rem;
-    }
-
-    .view-toggle {
-      display: flex;
-      background: var(--bg-dark);
-      border-radius: 0.5rem;
-      padding: 0.15rem;
-      border: 1px solid var(--border);
-      flex-shrink: 0;
-    }
-
-    .view-toggle button {
-      background: none;
-      border: none;
-      color: var(--text-muted);
-      padding: 0.35rem 0.65rem;
-      border-radius: 0.35rem;
-      font-size: 0.8rem;
-      cursor: pointer;
-      font-weight: 600;
-    }
-
-    .view-toggle button.active {
-      background: var(--accent);
-      color: white;
-    }
-
-    .roster-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 0.85rem;
-    }
-
-    .card {
+    /* Level & EXP Card */
+    .level-card {
       background: var(--bg-card);
       border: 1px solid var(--border);
       border-radius: 0.85rem;
-      padding: 1rem 0.75rem;
+      padding: 1rem;
       display: flex;
       flex-direction: column;
-      align-items: center;
-      position: relative;
-      cursor: pointer;
-      transition: transform 0.2s, box-shadow 0.2s;
-      text-align: center;
+      gap: 0.75rem;
     }
 
-    .card:active {
-      transform: scale(0.98);
-    }
-
-    .avatar-wrapper {
-      position: relative;
-      margin-bottom: 0.5rem;
-      display: inline-block;
-    }
-
-    .avatar-circle {
-      width: 76px;
-      height: 76px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 3px solid var(--border);
-      display: block;
-    }
-
-    .badge-common { border-color: var(--common); }
-    .badge-rare { border-color: var(--rare); }
-    .badge-ultra-rare { border-color: var(--ultra-rare); }
-    .badge-legendary { border-color: var(--legendary); }
-
-    .rarity-tag {
-      position: absolute;
-      top: -6px;
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 0.55rem;
-      font-weight: 800;
-      text-transform: uppercase;
-      padding: 0.1rem 0.4rem;
-      border-radius: 0.8rem;
-      color: #fff;
-      white-space: nowrap;
-      z-index: 2;
-    }
-
-    .tag-common { background: var(--common); color: #000; }
-    .tag-rare { background: var(--rare); }
-    .tag-ultra-rare { background: var(--ultra-rare); }
-    .tag-legendary { background: var(--legendary); color: #000; }
-
-    .card-name {
-      font-size: 0.95rem;
-      font-weight: 700;
-      margin-bottom: 0.15rem;
-      line-height: 1.2;
-    }
-
-    .rating {
-      font-size: 0.72rem;
-      font-weight: 700;
-      margin-bottom: 0.2rem;
-      text-transform: uppercase;
-    }
-
-    .rating-common { color: var(--common); }
-    .rating-rare { color: var(--rare); }
-    .rating-ultra-rare { color: var(--ultra-rare); }
-    .rating-legendary { color: var(--legendary); }
-
-    .star-display {
-      color: var(--star-color);
-      font-size: 0.75rem;
-      margin-bottom: 0.4rem;
-      letter-spacing: 1px;
-    }
-
-    .evo-container {
-      width: 100%;
-      margin-top: 0.25rem;
-    }
-
-    .evo-header {
+    .level-header {
       display: flex;
       justify-content: space-between;
-      font-size: 0.68rem;
+      align-items: flex-end;
+    }
+
+    .level-title-label {
+      font-size: 0.75rem;
       color: var(--text-muted);
-      margin-bottom: 0.2rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: 700;
     }
 
-    .evo-bar-bg {
+    .level-badge {
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: var(--accent);
+      line-height: 1.1;
+    }
+
+    .exp-counter {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      font-weight: 600;
+      text-align: right;
+    }
+
+    .exp-bar-bg {
       background: var(--bg-dark);
-      height: 5px;
-      border-radius: 3px;
+      height: 10px;
+      border-radius: 5px;
       overflow: hidden;
+      border: 1px solid var(--border);
     }
 
-    .evo-bar-fill {
+    .exp-bar-fill {
       height: 100%;
-      background: var(--accent);
+      background: linear-gradient(90deg, var(--accent), #a855f7);
       width: 0%;
-      transition: width 0.3s ease;
+      transition: width 0.4s ease;
+      border-radius: 5px;
     }
 
-    .roster-list {
+    /* Mobile Metrics (2 Lines Layout) */
+    .metrics-section {
       display: flex;
       flex-direction: column;
       gap: 0.6rem;
     }
 
-    .roster-list .card {
-      flex-direction: row;
-      justify-content: space-between;
-      padding: 0.6rem 0.85rem;
-      text-align: left;
+    .metric-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.6rem;
     }
 
-    .roster-list .avatar-wrapper {
-      margin-bottom: 0;
-    }
-
-    .roster-list .avatar-circle {
-      width: 48px;
-      height: 48px;
-    }
-
-    .roster-list .rarity-tag {
-      display: none;
-    }
-
-    .list-info {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-    }
-
-    .list-meta {
+    .metric-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 0.75rem;
+      padding: 0.85rem 0.5rem;
+      text-align: center;
       display: flex;
       flex-direction: column;
-      align-items: flex-end;
-      font-size: 0.72rem;
-      color: var(--text-muted);
-      gap: 0.15rem;
+      align-items: center;
+      justify-content: center;
+      min-height: 72px;
     }
 
-    .profile-badges {
-      margin-top: 0.85rem;
-      text-align: left;
+    .metric-value {
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: var(--text-primary);
+      line-height: 1.1;
+      margin-top: 0.15rem;
     }
 
-    .profile-badges h4 {
-      font-size: 0.78rem;
+    .metric-label {
+      font-size: 0.7rem;
       color: var(--text-muted);
-      margin-bottom: 0.4rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      font-weight: 700;
+    }
+
+    .star-rating-display {
+      color: var(--star-gold);
+      font-size: 1rem;
+      letter-spacing: 1px;
+      margin-top: 0.1rem;
+    }
+
+    .star-score-sub {
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      margin-top: 0.05rem;
+      font-weight: 600;
+    }
+
+    /* Distribution Breakdown Bars */
+    .breakdown-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 0.85rem;
+      padding: 1rem;
+    }
+
+    .breakdown-card h3 {
+      font-size: 0.75rem;
+      margin-bottom: 0.75rem;
+      color: var(--text-muted);
       text-transform: uppercase;
       letter-spacing: 0.05em;
-    }
-
-    .badge-tags {
-      display: flex;
-      gap: 0.35rem;
-      flex-wrap: wrap;
-    }
-
-    .character-badge {
-      background: var(--bg-dark);
-      border: 1px solid var(--border);
-      padding: 0.25rem 0.5rem;
-      border-radius: 0.35rem;
-      font-size: 0.7rem;
-      color: var(--text-primary);
-      display: inline-flex;
-      align-items: center;
-      gap: 0.25rem;
-    }
-
-    .character-badge.b-common { border-color: var(--common); }
-    .character-badge.b-rare { border-color: var(--rare); }
-    .character-badge.b-ultra-rare { border-color: var(--ultra-rare); }
-    .character-badge.b-legendary { border-color: var(--legendary); }
-
-    .modal-avatar-container {
-      position: relative;
-      display: inline-block;
-      margin-bottom: 0.25rem;
-    }
-
-    .avatar-action-overlay {
-      position: absolute;
-      top: 0; left: 0; right: 0; bottom: 0;
-      border-radius: 50%;
-      background: rgba(15, 23, 42, 0.75);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-      opacity: 0;
-      transition: opacity 0.2s ease;
-      z-index: 5;
-    }
-
-    .modal-avatar-container:hover .avatar-action-overlay,
-    .modal-avatar-container:focus .avatar-action-overlay {
-      opacity: 1;
-    }
-
-    .icon-btn {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      color: var(--text-primary);
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      font-size: 0.85rem;
-      padding: 0;
-    }
-
-    .icon-btn:hover { background: var(--accent); }
-    .icon-btn.delete-btn:hover { background: var(--danger); }
-
-    .modal-overlay {
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0, 0, 0, 0.8);
-      display: flex;
-      align-items: flex-end;
-      justify-content: center;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.2s ease;
-      z-index: 100;
-    }
-
-    .modal-overlay.active {
-      opacity: 1;
-      pointer-events: all;
-    }
-
-    .modal {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: 1rem 1rem 0 0;
-      width: 100%;
-      max-width: 500px;
-      max-height: 85vh;
-      overflow-y: auto;
-      padding: 1.25rem;
-      position: relative;
-    }
-
-    @media (min-width: 600px) {
-      .modal-overlay {
-        align-items: center;
-      }
-      .modal {
-        border-radius: 1rem;
-      }
-      .roster-grid {
-        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-      }
-    }
-
-    .close-btn {
-      position: absolute;
-      top: 0.85rem; right: 0.85rem;
-      background: none;
-      border: none;
-      color: var(--text-muted);
-      font-size: 1.2rem;
-      cursor: pointer;
-    }
-
-    .form-group {
-      display: flex;
-      flex-direction: column;
-      gap: 0.25rem;
-      margin-bottom: 0.85rem;
-    }
-
-    .form-group label {
-      font-size: 0.78rem;
-      color: var(--text-muted);
-    }
-
-    /* Interactive Star Rating Selector */
-    .star-input-group {
-      display: flex;
-      gap: 0.4rem;
-      margin-top: 0.2rem;
-    }
-
-    .star-input-btn {
-      background: var(--bg-dark);
-      border: 1px solid var(--border);
-      color: var(--text-muted);
-      font-size: 1.2rem;
-      padding: 0.3rem 0.6rem;
-      border-radius: 0.4rem;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .star-input-btn.selected, .star-input-btn:hover {
-      color: var(--star-color);
-      border-color: var(--star-color);
-    }
-
-    .checkbox-group {
-      display: grid;
-      grid-template-columns: repeat(1, 1fr);
-      gap: 0.35rem;
-      background: var(--bg-dark);
-      padding: 0.6rem;
-      border-radius: 0.5rem;
-      border: 1px solid var(--border);
-      max-height: 150px;
-      overflow-y: auto;
-    }
-
-    .checkbox-label {
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
-      font-size: 0.78rem;
-      cursor: pointer;
-    }
-
-    .checkbox-label input {
-      width: auto;
-    }
-
-    .modal-stats {
-      margin-top: 0.85rem;
-      background: var(--bg-dark);
-      padding: 0.75rem;
-      border-radius: 0.5rem;
-      display: flex;
-      flex-direction: column;
-      gap: 0.4rem;
-      font-size: 0.8rem;
-    }
-
-    .stat-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .encounter-history {
-      margin-top: 0.85rem;
-      text-align: left;
-    }
-
-    .encounter-history h4 {
-      font-size: 0.8rem;
-      color: var(--text-muted);
-      margin-bottom: 0.4rem;
-    }
-
-    .log-item {
-      background: var(--bg-dark);
-      border: 1px solid var(--border);
-      padding: 0.6rem;
-      border-radius: 0.5rem;
-      margin-bottom: 0.4rem;
-      font-size: 0.78rem;
-      position: relative;
-    }
-
-    .log-item-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-weight: 600;
-      color: var(--accent);
-      margin-bottom: 0.2rem;
-      padding-right: 1.25rem;
-    }
-
-    .log-stars {
-      color: var(--star-color);
-      font-size: 0.8rem;
-    }
-
-    .delete-log-btn {
-      position: absolute;
-      top: 0.4rem;
-      right: 0.4rem;
-      background: none;
-      border: none;
-      color: var(--text-muted);
-      font-size: 1rem;
-      cursor: pointer;
-      line-height: 1;
-    }
-
-    .delete-log-btn:hover { color: var(--danger); }
-
-    .action-btn {
-      width: 100%;
-      padding: 0.65rem;
-      margin-top: 0.85rem;
-      background: var(--accent);
-      border: none;
-      color: #fff;
       font-weight: 700;
-      border-radius: 0.5rem;
-      cursor: pointer;
-      font-size: 0.85rem;
+    }
+
+    .stacked-bar {
+      height: 14px;
+      border-radius: 7px;
+      background: var(--bg-dark);
+      display: flex;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      margin-bottom: 0.75rem;
+    }
+
+    .bar-segment {
+      height: 100%;
+      transition: width 0.3s ease;
+    }
+
+    /* Race Colors */
+    .seg-human { background: #ec4899; }
+    .seg-elf { background: #8b5cf6; }
+    .seg-cyborg { background: #06b6d4; }
+
+    /* Hair Colors */
+    .seg-blonde { background: #eab308; }
+    .seg-dark { background: #475569; }
+    .seg-silver { background: #cbd5e1; }
+    .seg-red { background: #f97316; }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem 0.8rem;
+      justify-content: center;
+      font-size: 0.75rem;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+      font-size: 0.75rem;
+      color: var(--text-primary);
+    }
+
+    .legend-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    /* Single Container Badge Showcase Card */
+    .gallery-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 0.85rem;
+      padding: 1rem;
+    }
+
+    .gallery-card h3 {
+      font-size: 0.75rem;
+      margin-bottom: 1rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    .badge-collection-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.25rem;
+    }
+
+    /* Legendary Badge Centered Top */
+    .top-legendary-slot {
+      display: flex;
+      justify-content: center;
+      width: 100%;
+    }
+
+    /* 6x2 Compact Badge Grid */
+    .badge-grid-6x2 {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 0.8rem 0.3rem;
+      width: 100%;
+    }
+
+    /* Badge Item without container box */
+    .badge-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 0.2rem;
+      background: transparent;
+      border: none;
+    }
+
+    .badge-symbol {
+      font-size: 1.75rem;
+      line-height: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: filter 0.3s, transform 0.2s;
+    }
+
+    .badge-name {
+      font-size: 0.62rem;
+      font-weight: 600;
+      line-height: 1.15;
+      color: var(--text-muted);
+      word-break: break-word;
+      hyphens: auto;
+      max-width: 100%;
+    }
+
+    /* Unlocked Illuminated Visual Effects */
+    .badge-item.unlocked .badge-symbol {
+      transform: scale(1.05);
+    }
+
+    .badge-item.unlocked .badge-name {
+      color: var(--text-primary);
+      font-weight: 700;
+    }
+
+    .badge-item.unlocked.b-legendary .badge-symbol {
+      filter: drop-shadow(0 0 10px rgba(234, 179, 8, 0.9));
+      font-size: 2.2rem;
+    }
+
+    .badge-item.unlocked.b-ultra-rare .badge-symbol {
+      filter: drop-shadow(0 0 7px rgba(168, 85, 247, 0.85));
+    }
+
+    .badge-item.unlocked.b-rare .badge-symbol {
+      filter: drop-shadow(0 0 6px rgba(59, 130, 246, 0.85));
+    }
+
+    .badge-item.unlocked.b-common .badge-symbol {
+      filter: drop-shadow(0 0 5px rgba(148, 163, 184, 0.7));
+    }
+
+    /* Locked Grayscale Dimmed Visual Effects */
+    .badge-item.locked {
+      opacity: 0.25;
+      filter: grayscale(100%);
+    }
+
+    .badge-item.locked .badge-symbol {
+      filter: grayscale(100%);
     }
   </style>
 </head>
 <body>
 
-  <!-- Navigation Bar -->
+  <!-- Navigation -->
   <nav class="navbar">
     <div class="nav-logo">Tracker Hub</div>
     <div class="nav-links">
-      <a href="index.html">Home</a>
-      <a href="catches.html" class="active">Catches</a>
-      <a href="stats.html">Stats</a>
+      <a href="#home">Home</a>
+      <a href="#catches">Catches</a>
+      <a href="#stats" class="active">Stats</a>
     </div>
   </nav>
 
-  <header>
-    <div class="top-bar">
-      <div class="stats-header">
-        <h1>Catches</h1>
-        <div class="stat-badge">Logs: <strong id="total-logs-count">0</strong></div>
+  <main class="stats-container">
+
+    <!-- Player Level & EXP Section -->
+    <section class="level-card">
+      <div class="level-header">
+        <div>
+          <div class="level-title-label">Personal Rank</div>
+          <div class="level-badge" id="player-level">Level 1</div>
+        </div>
+        <div class="exp-counter" id="exp-display">0 / 10 EXP</div>
       </div>
-      <button class="btn-primary" id="open-add-modal">+ Add New</button>
-    </div>
+      <div class="exp-bar-bg">
+        <div class="exp-bar-fill" id="exp-bar"></div>
+      </div>
+    </section>
 
-    <div class="filter-bar">
-      <div class="search-row">
-        <input type="text" id="search-input" placeholder="Search name...">
-        <div class="view-toggle">
-          <button id="btn-grid" class="active">Grid</button>
-          <button id="btn-list">List</button>
+    <!-- Mobile Metric Rows (2-Line Layout) -->
+    <section class="metrics-section">
+      <!-- Line 1: Total Catches & Encounters -->
+      <div class="metric-row">
+        <div class="metric-card">
+          <div class="metric-label">Total Catches</div>
+          <div class="metric-value" id="stat-catches">0</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Total Encounters</div>
+          <div class="metric-value" id="stat-encounters">0</div>
         </div>
       </div>
-      
-      <div class="filter-row">
-        <select id="race-filter">
-          <option value="all">Race</option>
-          <option value="Human">Human</option>
-          <option value="Elf">Elf</option>
-          <option value="Cyborg">Cyborg</option>
-        </select>
 
-        <select id="hair-filter">
-          <option value="all">Hair</option>
-          <option value="Blonde">Blonde</option>
-          <option value="Dark">Dark</option>
-          <option value="Silver">Silver</option>
-          <option value="Red">Red</option>
-        </select>
-
-        <select id="rating-filter">
-          <option value="all">Rating</option>
-          <option value="Common">Common</option>
-          <option value="Rare">Rare</option>
-          <option value="Ultra-Rare">Ultra-Rare</option>
-          <option value="Legendary">Legendary</option>
-        </select>
+      <!-- Line 2: Avg Stars & Badges Count -->
+      <div class="metric-row">
+        <div class="metric-card">
+          <div class="metric-label">Avg Star Rating</div>
+          <div class="star-rating-display" id="star-rating-container">☆☆☆☆☆</div>
+          <div class="star-score-sub" id="star-score-text">0.0 / 4.0 Stars</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Badges Count</div>
+          <div class="metric-value" id="stat-badge-count">0 / 13</div>
+        </div>
       </div>
-    </div>
-  </header>
+    </section>
 
-  <main id="roster-container" class="roster-grid"></main>
+    <!-- Race Breakdown Distribution -->
+    <section class="breakdown-card">
+      <h3>Race Breakdown Distribution</h3>
+      <div class="stacked-bar" id="race-bar"></div>
+      <div class="legend">
+        <div class="legend-item"><div class="legend-dot seg-human"></div> Human (<span id="cnt-human">0</span>)</div>
+        <div class="legend-item"><div class="legend-dot seg-elf"></div> Elf (<span id="cnt-elf">0</span>)</div>
+        <div class="legend-item"><div class="legend-dot seg-cyborg"></div> Cyborg (<span id="cnt-cyborg">0</span>)</div>
+      </div>
+    </section>
 
-  <!-- Profile Modal -->
-  <div class="modal-overlay" id="profile-modal-overlay">
-    <div class="modal" style="text-align: center;">
-      <button class="close-btn" id="close-profile-modal">&times;</button>
-      <div id="profile-modal-content"></div>
-    </div>
-  </div>
+    <!-- Hair Color Breakdown Distribution -->
+    <section class="breakdown-card">
+      <h3>Hair Color Breakdown Distribution</h3>
+      <div class="stacked-bar" id="hair-bar"></div>
+      <div class="legend">
+        <div class="legend-item"><div class="legend-dot seg-blonde"></div> Blonde (<span id="cnt-blonde">0</span>)</div>
+        <div class="legend-item"><div class="legend-dot seg-dark"></div> Dark (<span id="cnt-dark">0</span>)</div>
+        <div class="legend-item"><div class="legend-dot seg-silver"></div> Silver (<span id="cnt-silver">0</span>)</div>
+        <div class="legend-item"><div class="legend-dot seg-red"></div> Red (<span id="cnt-red">0</span>)</div>
+      </div>
+    </section>
 
-  <!-- Add Character Modal -->
-  <div class="modal-overlay" id="add-modal-overlay">
-    <div class="modal">
-      <button class="close-btn" id="close-add-modal">&times;</button>
-      <h3 style="margin-bottom: 1rem;">Add New Character</h3>
-      <form id="add-character-form">
-        <div class="form-group">
-          <label for="add-name">Character Name</label>
-          <input type="text" id="add-name" required placeholder="e.g. Elena Vane">
-        </div>
-        <div class="form-group">
-          <label for="add-race">Race</label>
-          <select id="add-race">
-            <option value="Human">Human</option>
-            <option value="Elf">Elf</option>
-            <option value="Cyborg">Cyborg</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="add-hair">Hair Color</label>
-          <select id="add-hair">
-            <option value="Blonde">Blonde</option>
-            <option value="Dark">Dark</option>
-            <option value="Silver">Silver</option>
-            <option value="Red">Red</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="add-avatar">Avatar Image URL</label>
-          <input type="url" id="add-avatar" placeholder="https://..." value="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80">
-        </div>
-        <button type="submit" class="action-btn">Save to Roster</button>
-      </form>
-    </div>
-  </div>
+    <!-- Single Container Card Badge Gallery Grid -->
+    <section class="gallery-card">
+      <h3>Badge Collection Gallery</h3>
+      <div class="badge-collection-wrapper">
+        <!-- Legendary Badge Top Centered -->
+        <div class="top-legendary-slot" id="legendary-slot"></div>
+        
+        <!-- 6x2 Grid for 12 Remaining Badges -->
+        <div class="badge-grid-6x2" id="grid-6x2"></div>
+      </div>
+    </section>
 
-  <!-- Edit Character Modal -->
-  <div class="modal-overlay" id="edit-modal-overlay">
-    <div class="modal">
-      <button class="close-btn" id="close-edit-modal">&times;</button>
-      <h3 style="margin-bottom: 1rem;">Edit Character</h3>
-      <form id="edit-character-form">
-        <div class="form-group">
-          <label for="edit-name">Character Name</label>
-          <input type="text" id="edit-name" required>
-        </div>
-        <div class="form-group">
-          <label for="edit-race">Race</label>
-          <select id="edit-race">
-            <option value="Human">Human</option>
-            <option value="Elf">Elf</option>
-            <option value="Cyborg">Cyborg</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="edit-hair">Hair Color</label>
-          <select id="edit-hair">
-            <option value="Blonde">Blonde</option>
-            <option value="Dark">Dark</option>
-            <option value="Silver">Silver</option>
-            <option value="Red">Red</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="edit-avatar">Avatar Photo URL</label>
-          <input type="url" id="edit-avatar" required>
-        </div>
-        <button type="submit" class="action-btn">Update Character</button>
-      </form>
-    </div>
-  </div>
-
-  <!-- Add Encounter Modal (With Star Rating Selector) -->
-  <div class="modal-overlay" id="encounter-modal-overlay">
-    <div class="modal">
-      <button class="close-btn" id="close-encounter-modal">&times;</button>
-      <h3 style="margin-bottom: 1rem;">Log Encounter</h3>
-      <form id="add-encounter-form">
-        <div class="form-group">
-          <label for="enc-type">Encounter Type</label>
-          <select id="enc-type">
-            <option value="Quest">Quest</option>
-            <option value="Training">Training</option>
-            <option value="Social">Social</option>
-            <option value="Boss Raid">Boss Raid</option>
-          </select>
-        </div>
-
-        <!-- Star Rating Input -->
-        <div class="form-group">
-          <label>Encounter Star Rating</label>
-          <div class="star-input-group" id="star-input-group">
-            <button type="button" class="star-input-btn" data-star="1">★</button>
-            <button type="button" class="star-input-btn" data-star="2">★</button>
-            <button type="button" class="star-input-btn" data-star="3">★</button>
-            <button type="button" class="star-input-btn" data-star="4">★</button>
-            <button type="button" class="star-input-btn selected" data-star="5">★</button>
-          </div>
-          <input type="hidden" id="enc-stars" value="5">
-        </div>
-
-        <div class="form-group">
-          <label for="enc-date">Date</label>
-          <input type="date" id="enc-date" required>
-        </div>
-        <div class="form-group">
-          <label for="enc-location">Location</label>
-          <input type="text" id="enc-location" required placeholder="e.g. Ironforge Outpost">
-        </div>
-
-        <div class="form-group">
-          <label>Earned Encounter Badges</label>
-          <div class="checkbox-group" id="badge-checkbox-list"></div>
-        </div>
-
-        <div class="form-group">
-          <label for="enc-notes">Notes</label>
-          <textarea id="enc-notes" rows="2" placeholder="Write event notes..."></textarea>
-        </div>
-        <button type="submit" class="action-btn">Log Encounter</button>
-      </form>
-    </div>
-  </div>
+  </main>
 
   <script>
-    const BADGES_CONFIG = [
-      { name: "Apex Mastery 👑", rarity: "Legendary", rank: 4 },
-      
-      { name: "Flawless Execution 💎", rarity: "Ultra-Rare", rank: 3 },
-      { name: "MVP Contender 🌟", rarity: "Ultra-Rare", rank: 3 },
-      { name: "Boss Slayer 🐉", rarity: "Ultra-Rare", rank: 3 },
-      { name: "Tactical Genius 🧠", rarity: "Ultra-Rare", rank: 3 },
-      
-      { name: "Critical Strike 💥", rarity: "Rare", rank: 2 },
-      { name: "First Blood ⚡", rarity: "Rare", rank: 2 },
-      { name: "Unshakable Shield 🛡️", rarity: "Rare", rank: 2 },
-      { name: "Speed Demon 🚀", rarity: "Rare", rank: 2 },
-      
-      { name: "Participant 🎖️", rarity: "Common", rank: 1 },
-      { name: "Team Player 🤝", rarity: "Common", rank: 1 },
-      { name: "Scout Duty 🔍", rarity: "Common", rank: 1 },
-      { name: "First Step 🐾", rarity: "Common", rank: 1 }
-    ];
-
-    let characters = JSON.parse(localStorage.getItem('roster_characters_v6')) || [
-      {
-        id: "001",
-        name: "Aria Shadow",
-        race: "Elf",
-        hair: "Silver",
-        avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
-        logs: [
-          { 
-            id: "log-1", 
-            type: "Boss Raid", 
-            stars: 5,
-            date: "2026-03-12", 
-            location: "Moonlit Citadel", 
-            badges: ["Apex Mastery 👑", "MVP Contender 🌟"], 
-            notes: "Cleared raid with maximum efficiency." 
-          }
-        ]
-      }
-    ];
-
-    let currentView = 'grid';
-    let selectedCharacterId = null;
-    let selectedStars = 5;
-
-    const container = document.getElementById('roster-container');
-    const totalLogsEl = document.getElementById('total-logs-count');
-    const searchInput = document.getElementById('search-input');
-    const raceFilter = document.getElementById('race-filter');
-    const hairFilter = document.getElementById('hair-filter');
-    const ratingFilter = document.getElementById('rating-filter');
-    const btnGrid = document.getElementById('btn-grid');
-    const btnList = document.getElementById('btn-list');
-
-    const profileOverlay = document.getElementById('profile-modal-overlay');
-    const profileContent = document.getElementById('profile-modal-content');
-    const closeProfile = document.getElementById('close-profile-modal');
-
-    const addOverlay = document.getElementById('add-modal-overlay');
-    const openAddBtn = document.getElementById('open-add-modal');
-    const closeAdd = document.getElementById('close-add-modal');
-    const addForm = document.getElementById('add-character-form');
-
-    const editOverlay = document.getElementById('edit-modal-overlay');
-    const closeEdit = document.getElementById('close-edit-modal');
-    const editForm = document.getElementById('edit-character-form');
-
-    const encounterOverlay = document.getElementById('encounter-modal-overlay');
-    const closeEncounter = document.getElementById('close-encounter-modal');
-    const encounterForm = document.getElementById('add-encounter-form');
-    const badgeCheckboxList = document.getElementById('badge-checkbox-list');
-
-    function saveState() {
-      localStorage.setItem('roster_characters_v6', JSON.stringify(characters));
-    }
-
-    function updateTotalLogsHeader() {
-      const total = characters.reduce((acc, c) => acc + c.logs.length, 0);
-      totalLogsEl.textContent = total;
-    }
-
-    function getStarRatingString(stars) {
-      const count = Math.min(Math.max(parseInt(stars) || 5, 1), 5);
-      return '★'.repeat(count);
-    }
-
-    function calculateAverageStars(logs) {
-      if (!logs || logs.length === 0) return 0;
-      const totalStars = logs.reduce((acc, l) => acc + (parseInt(l.stars) || 5), 0);
-      return Math.round(totalStars / logs.length);
-    }
-
-    function calculateEncounterLevel(encounterCount) {
-      if (encounterCount < 5) {
-        return { level: 1, current: encounterCount, max: 5, progress: (encounterCount / 5) * 100 };
-      } else if (encounterCount < 10) {
-        return { level: 2, current: encounterCount - 5, max: 5, progress: ((encounterCount - 5) / 5) * 100 };
-      } else if (encounterCount < 20) {
-        return { level: 3, current: encounterCount - 10, max: 10, progress: ((encounterCount - 10) / 10) * 100 };
-      } else if (encounterCount < 40) {
-        return { level: 4, current: encounterCount - 20, max: 20, progress: ((encounterCount - 20) / 20) * 100 };
-      } else {
-        return { level: 5, current: encounterCount, max: 40, progress: 100 };
-      }
-    }
-
-    function calculateHighestRating(logs) {
-      let maxRank = 0;
-      let highestRarity = "None";
-
-      logs.forEach(log => {
-        if (log.badges) {
-          log.badges.forEach(badgeName => {
-            const conf = BADGES_CONFIG.find(b => b.name === badgeName);
-            if (conf && conf.rank > maxRank) {
-              maxRank = conf.rank;
-              highestRarity = conf.rarity;
-            }
-          });
-        }
+    // Navigation active state handler
+    document.querySelectorAll('.nav-links a').forEach(link => {
+      link.addEventListener('click', function() {
+        document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+        this.classList.add('active');
       });
+    });
 
-      return { rarity: highestRarity, rank: maxRank };
+    // Config for 13 System Badges (1 Legendary, 4 Ultra-Rare, 4 Rare, 4 Common)
+    const BADGES_CONFIG = [
+      // Top Slot Badge
+      { name: "Apex Mastery 👑", rarity: "Legendary", exp: 20 },
+      
+      // 12 Grid Badges
+      { name: "Flawless Execution 💎", rarity: "Ultra-Rare", exp: 15 },
+      { name: "MVP Contender 🌟", rarity: "Ultra-Rare", exp: 15 },
+      { name: "Boss Slayer 🐉", rarity: "Ultra-Rare", exp: 15 },
+      { name: "Tactical Genius 🧠", rarity: "Ultra-Rare", exp: 15 },
+      
+      { name: "Critical Strike 💥", rarity: "Rare", exp: 10 },
+      { name: "First Blood ⚡", rarity: "Rare", exp: 10 },
+      { name: "Unshakable Shield 🛡️", rarity: "Rare", exp: 10 },
+      { name: "Speed Demon 🚀", rarity: "Rare", exp: 10 },
+      
+      { name: "Participant 🎖️", rarity: "Common", exp: 5 },
+      { name: "Team Player 🤝", rarity: "Common", exp: 5 },
+      { name: "Scout Duty 🔍", rarity: "Common", exp: 5 },
+      { name: "First Step 🐾", rarity: "Common", exp: 5 }
+    ];
+
+    // Read characters roster from localStorage
+    const characters = JSON.parse(localStorage.getItem('roster_characters_v5')) || [];
+
+    // Progressive Bracket Engine (Level 100 max = 10,000 EXP total)
+    function getExpThresholdForLevel(lvl) {
+      if (lvl <= 1) return 0;
+      let cumulative = 0;
+      for (let i = 1; i < lvl; i++) {
+        const bracket = Math.floor((i - 1) / 10);
+        const expForNext = 10 + (bracket * 20); // Incremental brackets per 10 levels
+        cumulative += expForNext;
+      }
+      return cumulative;
+    }
+
+    function calculateLevelData(totalExp) {
+      let level = 1;
+      while (level < 100) {
+        const nextThreshold = getExpThresholdForLevel(level + 1);
+        if (totalExp >= nextThreshold) {
+          level++;
+        } else {
+          break;
+        }
+      }
+
+      const currentBase = getExpThresholdForLevel(level);
+      const nextBase = level >= 100 ? currentBase : getExpThresholdForLevel(level + 1);
+      const reqForThisLevel = nextBase - currentBase;
+      const progressInLevel = totalExp - currentBase;
+      const progressPercent = level >= 100 ? 100 : Math.min(100, Math.max(0, (progressInLevel / reqForThisLevel) * 100));
+
+      return {
+        level,
+        currentBase,
+        nextBase,
+        reqForThisLevel,
+        progressInLevel,
+        progressPercent
+      };
     }
 
     function getRarityClass(rarity) {
       return rarity.toLowerCase().replace(' ', '-');
     }
 
-    function renderBadgeCheckboxes() {
-      badgeCheckboxList.innerHTML = '';
-      BADGES_CONFIG.forEach(b => {
-        const label = document.createElement('label');
-        label.className = 'checkbox-label';
-        label.innerHTML = `
-          <input type="checkbox" name="encounter-badges" value="${b.name}">
-          <span>${b.name} <small style="color:var(--text-muted);">(${b.rarity})</small></span>
-        `;
-        badgeCheckboxList.appendChild(label);
-      });
+    function generateStarString(score) {
+      const fullStars = Math.floor(score);
+      const hasHalf = (score - fullStars) >= 0.5;
+      const emptyStars = 4 - fullStars - (hasHalf ? 1 : 0);
+
+      let starsHTML = '';
+      for (let i = 0; i < fullStars; i++) starsHTML += '★';
+      if (hasHalf) starsHTML += '½';
+      for (let i = 0; i < emptyStars; i++) starsHTML += '☆';
+
+      return starsHTML;
     }
 
-    function setupStarInputs() {
-      const starBtns = document.querySelectorAll('.star-input-btn');
-      starBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-          const rating = parseInt(btn.getAttribute('data-star'));
-          selectedStars = rating;
-          document.getElementById('enc-stars').value = rating;
+    function extractBadgeSymbolAndTitle(badgeFullName) {
+      const parts = badgeFullName.trim().split(' ');
+      const symbol = parts.pop();
+      const nameOnly = parts.join(' ');
+      return { symbol, nameOnly };
+    }
 
-          starBtns.forEach(b => {
-            const bRating = parseInt(b.getAttribute('data-star'));
-            if (bRating <= rating) {
-              b.classList.add('selected');
-            } else {
-              b.classList.remove('selected');
+    function computeStats() {
+      const unlockedBadges = new Set();
+      let totalEncounters = 0;
+
+      const raceCounts = { Human: 0, Elf: 0, Cyborg: 0 };
+      const hairCounts = { Blonde: 0, Dark: 0, Silver: 0, Red: 0 };
+
+      const totalCatches = characters.length;
+      const avatarExp = totalCatches * 100; // 100 EXP per catch avatar
+
+      let badgeExp = 0;
+      let ratingScoresSum = 0;
+      const ratingMap = { 'Common': 1, 'Rare': 2, 'Ultra-Rare': 3, 'Legendary': 4 };
+
+      characters.forEach(c => {
+        if (raceCounts[c.race] !== undefined) raceCounts[c.race]++;
+        if (hairCounts[c.hair] !== undefined) hairCounts[c.hair]++;
+
+        if (c.logs) {
+          totalEncounters += c.logs.length;
+          let highestRarityVal = 0;
+
+          c.logs.forEach(log => {
+            if (log.badges) {
+              log.badges.forEach(badgeName => {
+                unlockedBadges.add(badgeName);
+                const conf = BADGES_CONFIG.find(b => b.name === badgeName);
+                if (conf && ratingMap[conf.rarity] > highestRarityVal) {
+                  highestRarityVal = ratingMap[conf.rarity];
+                }
+              });
             }
           });
-        });
-      });
-    }
 
-    function render() {
-      const query = searchInput.value.toLowerCase();
-      const race = raceFilter.value;
-      const hair = hairFilter.value;
-      const selectedRating = ratingFilter.value;
-
-      const filtered = characters.filter(item => {
-        const matchesName = item.name.toLowerCase().includes(query);
-        const matchesRace = race === 'all' || item.race === race;
-        const matchesHair = hair === 'all' || item.hair === hair;
-        
-        const ratingInfo = calculateHighestRating(item.logs);
-        const matchesRating = selectedRating === 'all' || ratingInfo.rarity === selectedRating;
-
-        return matchesName && matchesRace && matchesHair && matchesRating;
-      });
-
-      container.className = currentView === 'grid' ? 'roster-grid' : 'roster-list';
-      container.innerHTML = '';
-
-      filtered.forEach(item => {
-        const totalEncounters = item.logs.length;
-        const levelInfo = calculateEncounterLevel(totalEncounters);
-        const ratingInfo = calculateHighestRating(item.logs);
-        const rClass = getRarityClass(ratingInfo.rarity);
-        const avgStars = calculateAverageStars(item.logs);
-        const starStr = getStarRatingString(avgStars || 5);
-        
-        const card = document.createElement('div');
-        card.className = 'card';
-
-        if (currentView === 'grid') {
-          card.innerHTML = `
-            <div class="avatar-wrapper">
-              <span class="rarity-tag tag-${rClass}">${ratingInfo.rarity}</span>
-              <img src="${item.avatar}" class="avatar-circle badge-${rClass}" alt="${item.name}">
-            </div>
-            <div class="card-name">${item.name}</div>
-            <div class="rating rating-${rClass}">${ratingInfo.rarity}</div>
-            <div class="star-display">${starStr}</div>
-            <div class="evo-container">
-              <div class="evo-header">
-                <span>Lvl ${levelInfo.level}</span>
-                <span>${totalEncounters} Enc</span>
-              </div>
-              <div class="evo-bar-bg">
-                <div class="evo-bar-fill" style="width: ${levelInfo.progress}%"></div>
-              </div>
-            </div>
-          `;
-        } else {
-          card.innerHTML = `
-            <div class="list-info">
-              <div class="avatar-wrapper">
-                <img src="${item.avatar}" class="avatar-circle badge-${rClass}" alt="${item.name}">
-              </div>
-              <div>
-                <div class="card-name">${item.name}</div>
-                <div class="rating rating-${rClass}">${ratingInfo.rarity}</div>
-                <div class="star-display">${starStr}</div>
-              </div>
-            </div>
-            <div class="list-meta">
-              <span>Lvl ${levelInfo.level}</span>
-              <span>${totalEncounters} Enc</span>
-            </div>
-          `;
+          ratingScoresSum += highestRarityVal;
         }
-
-        card.addEventListener('click', () => openProfileModal(item.id));
-        container.appendChild(card);
       });
 
-      updateTotalLogsHeader();
-      saveState();
-    }
-
-    function openProfileModal(id) {
-      selectedCharacterId = id;
-      const item = characters.find(c => c.id === id);
-      if (!item) return;
-
-      const totalEncounters = item.logs.length;
-      const levelInfo = calculateEncounterLevel(totalEncounters);
-      const ratingInfo = calculateHighestRating(item.logs);
-      const rClass = getRarityClass(ratingInfo.rarity);
-      const avgStars = calculateAverageStars(item.logs);
-
-      const earnedBadgesSet = new Set();
-      item.logs.forEach(l => {
-        if (l.badges) l.badges.forEach(b => earnedBadgesSet.add(b));
+      // EXP calculation from unique unlocked badges
+      unlockedBadges.forEach(bName => {
+        const conf = BADGES_CONFIG.find(b => b.name === bName);
+        if (conf) badgeExp += conf.exp;
       });
 
-      let badgesHTML = Array.from(earnedBadgesSet).map(bName => {
-        const conf = BADGES_CONFIG.find(c => c.name === bName);
-        const badgeClass = conf ? getRarityClass(conf.rarity) : 'common';
-        return `<span class="character-badge b-${badgeClass}">${bName}</span>`;
-      }).join('');
+      const encounterExp = totalEncounters * 5; // 5 EXP per encounter
+      const totalExp = avatarExp + badgeExp + encounterExp;
 
-      if (!badgesHTML) {
-        badgesHTML = '<span style="color:var(--text-muted); font-size:0.75rem;">No badges earned yet.</span>';
+      let avgStarScore = 0;
+      if (totalCatches > 0) {
+        avgStarScore = ratingScoresSum / totalCatches;
       }
 
-      let logsHTML = item.logs.map(l => `
-        <div class="log-item">
-          <button class="delete-log-btn" onclick="deleteEncounter('${l.id}')">&times;</button>
-          <div class="log-item-header">
-            <span>${l.type}</span>
-            <span class="log-stars">${getStarRatingString(l.stars || 5)}</span>
-          </div>
-          <div style="color:var(--text-muted); font-size:0.72rem; margin-bottom:0.2rem;">${l.date} &bull; ${l.location}</div>
-          ${l.badges && l.badges.length ? `<div style="margin-top:0.2rem;">${l.badges.map(b => `<span class="character-badge" style="font-size:0.65rem;">${b}</span>`).join(' ')}</div>` : ''}
-          ${l.notes ? `<div style="color:var(--text-muted); margin-top:0.2rem;">${l.notes}</div>` : ''}
-        </div>
-      `).join('');
-
-      profileContent.innerHTML = `
-        <div class="modal-avatar-container">
-          <span class="rarity-tag tag-${rClass}">${ratingInfo.rarity}</span>
-          <img src="${item.avatar}" class="avatar-circle badge-${rClass}" style="width:90px; height:90px;" alt="${item.name}">
-          <div class="avatar-action-overlay">
-            <button class="icon-btn" onclick="openEditModal('${item.id}')">✏️</button>
-            <button class="icon-btn delete-btn" onclick="deleteCharacter('${item.id}')">🗑️</button>
-          </div>
-        </div>
-
-        <h3 style="margin-top:0.2rem;">${item.name}</h3>
-        <div class="rating rating-${rClass}" style="font-size:0.85rem;">Highest Rarity: ${ratingInfo.rarity}</div>
-        <div class="star-display" style="font-size:0.95rem; margin-bottom:0.4rem;">${getStarRatingString(avgStars || 5)}</div>
-
-        <div class="modal-stats">
-          <div class="stat-row"><span>Race</span><strong>${item.race}</strong></div>
-          <div class="stat-row"><span>Hair Color</span><strong>${item.hair}</strong></div>
-          <div class="stat-row"><span>Level Tier</span><strong>Level ${levelInfo.level}</strong></div>
-          <div class="stat-row"><span>Total Encounters</span><strong>${totalEncounters}</strong></div>
-        </div>
-
-        <div class="profile-badges">
-          <h4>Unlocked Badges</h4>
-          <div class="badge-tags">${badgesHTML}</div>
-        </div>
-
-        <button class="action-btn" onclick="openEncounterModal()">+ Log Encounter</button>
-
-        <div class="encounter-history">
-          <h4>Encounter Logs (${item.logs.length})</h4>
-          ${logsHTML || '<div style="color:var(--text-muted); font-size:0.75rem;">No encounters logged yet.</div>'}
-        </div>
-      `;
-      profileOverlay.classList.add('active');
-    }
-
-    window.deleteCharacter = function(id) {
-      if (confirm("Delete this character and all logs?")) {
-        characters = characters.filter(c => c.id !== id);
-        profileOverlay.classList.remove('active');
-        render();
-      }
-    };
-
-    window.openEditModal = function(id) {
-      const item = characters.find(c => c.id === id);
-      if (!item) return;
-
-      document.getElementById('edit-name').value = item.name;
-      document.getElementById('edit-race').value = item.race;
-      document.getElementById('edit-hair').value = item.hair;
-      document.getElementById('edit-avatar').value = item.avatar;
-
-      editOverlay.classList.add('active');
-    };
-
-    editForm.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const item = characters.find(c => c.id === selectedCharacterId);
-      if (item) {
-        item.name = document.getElementById('edit-name').value;
-        item.race = document.getElementById('edit-race').value;
-        item.hair = document.getElementById('edit-hair').value;
-        item.avatar = document.getElementById('edit-avatar').value;
-
-        editOverlay.classList.remove('active');
-        render();
-        openProfileModal(selectedCharacterId);
-      }
-    });
-
-    window.deleteEncounter = function(logId) {
-      const item = characters.find(c => c.id === selectedCharacterId);
-      if (item) {
-        item.logs = item.logs.filter(l => l.id !== logId);
-        render();
-        openProfileModal(selectedCharacterId);
-      }
-    };
-
-    window.openEncounterModal = function() {
-      document.getElementById('enc-date').valueAsDate = new Date();
-      selectedStars = 5;
-      document.getElementById('enc-stars').value = 5;
-      document.querySelectorAll('.star-input-btn').forEach(b => b.classList.add('selected'));
-      encounterOverlay.classList.add('active');
-    };
-
-    encounterForm.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const item = characters.find(c => c.id === selectedCharacterId);
-      if (item) {
-        const checkedBadges = Array.from(document.querySelectorAll('input[name="encounter-badges"]:checked')).map(cb => cb.value);
-
-        const newLog = {
-          id: "log-" + Date.now(),
-          type: document.getElementById('enc-type').value,
-          stars: parseInt(document.getElementById('enc-stars').value) || 5,
-          date: document.getElementById('enc-date').value,
-          location: document.getElementById('enc-location').value,
-          badges: checkedBadges,
-          notes: document.getElementById('enc-notes').value
-        };
-
-        item.logs.unshift(newLog);
-        encounterForm.reset();
-        encounterOverlay.classList.remove('active');
-        render();
-        openProfileModal(selectedCharacterId);
-      }
-    });
-
-    addForm.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const newChar = {
-        id: Date.now().toString(),
-        name: document.getElementById('add-name').value,
-        race: document.getElementById('add-race').value,
-        hair: document.getElementById('add-hair').value,
-        avatar: document.getElementById('add-avatar').value || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
-        logs: []
+      return {
+        totalCatches,
+        totalEncounters,
+        unlockedBadges,
+        totalExp,
+        raceCounts,
+        hairCounts,
+        avgStarScore
       };
+    }
 
-      characters.push(newChar);
-      addForm.reset();
-      addOverlay.classList.remove('active');
-      render();
-    });
+    function renderPage() {
+      const stats = computeStats();
+      const levelData = calculateLevelData(stats.totalExp);
 
-    searchInput.addEventListener('input', render);
-    raceFilter.addEventListener('change', render);
-    hairFilter.addEventListener('change', render);
-    ratingFilter.addEventListener('change', render);
+      // Render Level & EXP Progress
+      document.getElementById('player-level').textContent = `Level ${levelData.level}`;
+      if (levelData.level >= 100) {
+        document.getElementById('exp-display').textContent = `10,000 / 10,000 EXP (MAX)`;
+      } else {
+        document.getElementById('exp-display').textContent = `${levelData.progressInLevel} / ${levelData.reqForThisLevel} EXP`;
+      }
+      document.getElementById('exp-bar').style.width = `${levelData.progressPercent}%`;
 
-    btnGrid.addEventListener('click', () => {
-      currentView = 'grid';
-      btnGrid.classList.add('active');
-      btnList.classList.remove('active');
-      render();
-    });
+      // Render Metrics
+      document.getElementById('stat-catches').textContent = stats.totalCatches;
+      document.getElementById('stat-encounters').textContent = stats.totalEncounters;
+      document.getElementById('stat-badge-count').textContent = `${stats.unlockedBadges.size} / ${BADGES_CONFIG.length}`;
 
-    btnList.addEventListener('click', () => {
-      currentView = 'list';
-      btnList.classList.add('active');
-      btnGrid.classList.remove('active');
-      render();
-    });
+      // Star Rating
+      document.getElementById('star-rating-container').textContent = generateStarString(stats.avgStarScore);
+      document.getElementById('star-score-text').textContent = `${stats.avgStarScore.toFixed(1)} / 4.0 Avg Stars`;
 
-    openAddBtn.addEventListener('click', () => addOverlay.classList.add('active'));
-    closeAdd.addEventListener('click', () => addOverlay.classList.remove('active'));
-    closeEdit.addEventListener('click', () => editOverlay.classList.remove('active'));
-    closeProfile.addEventListener('click', () => profileOverlay.classList.remove('active'));
-    closeEncounter.addEventListener('click', () => encounterOverlay.classList.remove('active'));
+      // Render Race Breakdown Bar
+      document.getElementById('cnt-human').textContent = stats.raceCounts.Human;
+      document.getElementById('cnt-elf').textContent = stats.raceCounts.Elf;
+      document.getElementById('cnt-cyborg').textContent = stats.raceCounts.Cyborg;
 
-    profileOverlay.addEventListener('click', (e) => { if (e.target === profileOverlay) profileOverlay.classList.remove('active'); });
-    addOverlay.addEventListener('click', (e) => { if (e.target === addOverlay) addOverlay.classList.remove('active'); });
-    editOverlay.addEventListener('click', (e) => { if (e.target === editOverlay) editOverlay.classList.remove('active'); });
-    encounterOverlay.addEventListener('click', (e) => { if (e.target === encounterOverlay) encounterOverlay.classList.remove('active'); });
+      const raceBar = document.getElementById('race-bar');
+      raceBar.innerHTML = '';
+      if (stats.totalCatches > 0) {
+        raceBar.innerHTML = `
+          <div class="bar-segment seg-human" style="width: ${(stats.raceCounts.Human / stats.totalCatches) * 100}%"></div>
+          <div class="bar-segment seg-elf" style="width: ${(stats.raceCounts.Elf / stats.totalCatches) * 100}%"></div>
+          <div class="bar-segment seg-cyborg" style="width: ${(stats.raceCounts.Cyborg / stats.totalCatches) * 100}%"></div>
+        `;
+      }
 
-    setupStarInputs();
-    renderBadgeCheckboxes();
-    render();
+      // Render Hair Color Breakdown Bar
+      document.getElementById('cnt-blonde').textContent = stats.hairCounts.Blonde;
+      document.getElementById('cnt-dark').textContent = stats.hairCounts.Dark;
+      document.getElementById('cnt-silver').textContent = stats.hairCounts.Silver;
+      document.getElementById('cnt-red').textContent = stats.hairCounts.Red;
+
+      const hairBar = document.getElementById('hair-bar');
+      hairBar.innerHTML = '';
+      if (stats.totalCatches > 0) {
+        hairBar.innerHTML = `
+          <div class="bar-segment seg-blonde" style="width: ${(stats.hairCounts.Blonde / stats.totalCatches) * 100}%"></div>
+          <div class="bar-segment seg-dark" style="width: ${(stats.hairCounts.Dark / stats.totalCatches) * 100}%"></div>
+          <div class="bar-segment seg-silver" style="width: ${(stats.hairCounts.Silver / stats.totalCatches) * 100}%"></div>
+          <div class="bar-segment seg-red" style="width: ${(stats.hairCounts.Red / stats.totalCatches) * 100}%"></div>
+        `;
+      }
+
+      // Render Single Card Badge Showcase
+      const legendarySlot = document.getElementById('legendary-slot');
+      const grid6x2 = document.getElementById('grid-6x2');
+      
+      legendarySlot.innerHTML = '';
+      grid6x2.innerHTML = '';
+
+      BADGES_CONFIG.forEach((badge, index) => {
+        const isUnlocked = stats.unlockedBadges.has(badge.name);
+        const rClass = getRarityClass(badge.rarity);
+        const { symbol, nameOnly } = extractBadgeSymbolAndTitle(badge.name);
+
+        const badgeElem = document.createElement('div');
+        badgeElem.className = `badge-item ${isUnlocked ? 'unlocked b-' + rClass : 'locked'}`;
+        
+        badgeElem.innerHTML = `
+          <div class="badge-symbol">${symbol}</div>
+          <div class="badge-name">${nameOnly}</div>
+        `;
+
+        // Index 0 is Legendary (Top Centered), remaining 12 go into 6x2 grid
+        if (index === 0) {
+          legendarySlot.appendChild(badgeElem);
+        } else {
+          grid6x2.appendChild(badgeElem);
+        }
+      });
+    }
+
+    // Initialize application logic on page load
+    window.onload = renderPage;
   </script>
 </body>
 </html>
