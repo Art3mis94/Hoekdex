@@ -2,18 +2,18 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Player Stats & Badge Collection</title>
   <style>
     :root {
-      --bg-dark: #090d16;
-      --bg-card: #151c2c;
-      --bg-hover: #1e293b;
+      --bg-dark: #0f172a;
+      --bg-card: #1e293b;
+      --bg-hover: #334155;
       --accent: #6366f1;
-      --accent-glow: rgba(99, 102, 241, 0.4);
+      --accent-hover: #4f46e5;
       --text-primary: #f8fafc;
       --text-muted: #94a3b8;
-      --border: #243048;
+      --border: #334155;
       
       --common: #94a3b8;
       --rare: #3b82f6;
@@ -26,18 +26,14 @@
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      -webkit-tap-highlight-color: transparent;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     }
 
     body {
       background-color: var(--bg-dark);
       color: var(--text-primary);
-      padding: 0.75rem;
-      padding-bottom: 2rem;
+      padding: 2rem;
       min-height: 100vh;
-      max-width: 600px;
-      margin: 0 auto;
     }
 
     /* Navigation Bar */
@@ -47,13 +43,13 @@
       align-items: center;
       background: var(--bg-card);
       border: 1px solid var(--border);
-      padding: 0.75rem 1rem;
-      border-radius: 0.85rem;
-      margin-bottom: 1rem;
+      padding: 1rem 1.5rem;
+      border-radius: 0.75rem;
+      margin-bottom: 2rem;
     }
 
     .nav-logo {
-      font-size: 1.1rem;
+      font-size: 1.25rem;
       font-weight: 800;
       color: var(--accent);
       text-transform: uppercase;
@@ -62,15 +58,15 @@
 
     .nav-links {
       display: flex;
-      gap: 0.35rem;
+      gap: 1rem;
     }
 
     .nav-links a {
       color: var(--text-muted);
       text-decoration: none;
       font-weight: 600;
-      font-size: 0.85rem;
-      padding: 0.4rem 0.75rem;
+      font-size: 0.95rem;
+      padding: 0.5rem 1rem;
       border-radius: 0.5rem;
       transition: all 0.2s;
     }
@@ -84,22 +80,22 @@
       border: 1px solid var(--accent);
     }
 
-    /* Main Container Grid */
-    .stats-container {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
+    /* Layout Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
     }
 
-    /* Level & EXP Card */
+    /* Level & EXP Section */
     .level-card {
       background: var(--bg-card);
       border: 1px solid var(--border);
-      border-radius: 0.85rem;
-      padding: 1rem;
+      border-radius: 1rem;
+      padding: 1.5rem;
       display: flex;
       flex-direction: column;
-      gap: 0.75rem;
+      gap: 1rem;
     }
 
     .level-header {
@@ -108,32 +104,21 @@
       align-items: flex-end;
     }
 
-    .level-title-label {
-      font-size: 0.75rem;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      font-weight: 700;
-    }
-
     .level-badge {
-      font-size: 1.6rem;
+      font-size: 2rem;
       font-weight: 800;
       color: var(--accent);
-      line-height: 1.1;
     }
 
     .exp-counter {
-      font-size: 0.8rem;
+      font-size: 1rem;
       color: var(--text-muted);
-      font-weight: 600;
-      text-align: right;
     }
 
     .exp-bar-bg {
       background: var(--bg-dark);
-      height: 10px;
-      border-radius: 5px;
+      height: 12px;
+      border-radius: 6px;
       overflow: hidden;
       border: 1px solid var(--border);
     }
@@ -143,90 +128,77 @@
       background: linear-gradient(90deg, var(--accent), #a855f7);
       width: 0%;
       transition: width 0.4s ease;
-      border-radius: 5px;
     }
 
-    /* Mobile Metrics (2 Lines Layout) */
-    .metrics-section {
-      display: flex;
-      flex-direction: column;
-      gap: 0.6rem;
-    }
-
-    .metric-row {
+    /* Core Metrics Cards */
+    .metrics-row {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 0.6rem;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
     }
 
     .metric-card {
       background: var(--bg-card);
       border: 1px solid var(--border);
       border-radius: 0.75rem;
-      padding: 0.85rem 0.5rem;
+      padding: 1.25rem;
       text-align: center;
       display: flex;
       flex-direction: column;
-      align-items: center;
       justify-content: center;
-      min-height: 72px;
     }
 
     .metric-value {
-      font-size: 1.35rem;
-      font-weight: 800;
+      font-size: 1.7rem;
+      font-weight: 700;
       color: var(--text-primary);
-      line-height: 1.1;
-      margin-top: 0.15rem;
+      margin-top: 0.25rem;
     }
 
     .metric-label {
-      font-size: 0.7rem;
+      font-size: 0.85rem;
       color: var(--text-muted);
       text-transform: uppercase;
-      letter-spacing: 0.04em;
-      font-weight: 700;
+      letter-spacing: 0.05em;
     }
 
     .star-rating-display {
       color: var(--star-gold);
-      font-size: 1rem;
-      letter-spacing: 1px;
-      margin-top: 0.1rem;
+      font-size: 1.2rem;
+      letter-spacing: 2px;
+      margin-top: 0.2rem;
     }
 
     .star-score-sub {
-      font-size: 0.65rem;
+      font-size: 0.75rem;
       color: var(--text-muted);
-      margin-top: 0.05rem;
-      font-weight: 600;
+      margin-top: 0.1rem;
     }
 
-    /* Distribution Breakdown Bars */
+    /* Distribution Bar Cards */
     .breakdown-card {
       background: var(--bg-card);
       border: 1px solid var(--border);
-      border-radius: 0.85rem;
-      padding: 1rem;
+      border-radius: 1rem;
+      padding: 1.5rem;
     }
 
     .breakdown-card h3 {
-      font-size: 0.75rem;
-      margin-bottom: 0.75rem;
+      font-size: 0.95rem;
+      margin-bottom: 1rem;
       color: var(--text-muted);
       text-transform: uppercase;
       letter-spacing: 0.05em;
-      font-weight: 700;
     }
 
     .stacked-bar {
-      height: 14px;
-      border-radius: 7px;
+      height: 18px;
+      border-radius: 9px;
       background: var(--bg-dark);
       display: flex;
       overflow: hidden;
       border: 1px solid var(--border);
-      margin-bottom: 0.75rem;
+      margin-bottom: 1rem;
     }
 
     .bar-segment {
@@ -234,12 +206,12 @@
       transition: width 0.3s ease;
     }
 
-    /* Race Colors */
+    /* Colors for Races */
     .seg-human { background: #ec4899; }
     .seg-elf { background: #8b5cf6; }
     .seg-cyborg { background: #06b6d4; }
 
-    /* Hair Colors */
+    /* Colors for Hair */
     .seg-blonde { background: #eab308; }
     .seg-dark { background: #475569; }
     .seg-silver { background: #cbd5e1; }
@@ -248,137 +220,98 @@
     .legend {
       display: flex;
       flex-wrap: wrap;
-      gap: 0.6rem 0.8rem;
+      gap: 1.25rem;
       justify-content: center;
-      font-size: 0.75rem;
+      font-size: 0.85rem;
     }
 
     .legend-item {
       display: flex;
       align-items: center;
-      gap: 0.3rem;
-      font-size: 0.75rem;
-      color: var(--text-primary);
+      gap: 0.4rem;
     }
 
     .legend-dot {
-      width: 8px;
-      height: 8px;
+      width: 10px;
+      height: 10px;
       border-radius: 50%;
-      flex-shrink: 0;
     }
 
-    /* Single Container Badge Showcase Card */
+    /* Badge Showcase Gallery */
     .gallery-card {
       background: var(--bg-card);
       border: 1px solid var(--border);
-      border-radius: 0.85rem;
-      padding: 1rem;
+      border-radius: 1rem;
+      padding: 1.5rem;
     }
 
     .gallery-card h3 {
-      font-size: 0.75rem;
-      margin-bottom: 1rem;
+      font-size: 0.95rem;
+      margin-bottom: 1.25rem;
       color: var(--text-muted);
       text-transform: uppercase;
       letter-spacing: 0.05em;
-      font-weight: 700;
-      text-align: center;
     }
 
-    .badge-collection-wrapper {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 1.25rem;
-    }
-
-    /* Legendary Badge Centered Top */
-    .top-legendary-slot {
-      display: flex;
-      justify-content: center;
-      width: 100%;
-    }
-
-    /* 6x2 Compact Badge Grid */
-    .badge-grid-6x2 {
+    .badge-grid {
       display: grid;
-      grid-template-columns: repeat(6, 1fr);
-      gap: 0.8rem 0.3rem;
-      width: 100%;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 1rem;
     }
 
-    /* Badge Item without container box */
-    .badge-item {
+    .badge-tile {
+      background: var(--bg-dark);
+      border: 1px solid var(--border);
+      border-radius: 0.75rem;
+      padding: 1rem;
       display: flex;
       flex-direction: column;
       align-items: center;
       text-align: center;
-      gap: 0.2rem;
-      background: transparent;
-      border: none;
+      gap: 0.5rem;
+      transition: transform 0.2s, box-shadow 0.2s;
     }
 
-    .badge-symbol {
-      font-size: 1.75rem;
-      line-height: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: filter 0.3s, transform 0.2s;
+    /* Unlocked Illuminated Effect */
+    .badge-tile.unlocked {
+      opacity: 1;
+      border-color: var(--border);
     }
 
-    .badge-name {
-      font-size: 0.62rem;
+    .badge-tile.unlocked.b-common { border-color: var(--common); box-shadow: 0 0 10px rgba(148, 163, 184, 0.2); }
+    .badge-tile.unlocked.b-rare { border-color: var(--rare); box-shadow: 0 0 12px rgba(59, 130, 246, 0.3); }
+    .badge-tile.unlocked.b-ultra-rare { border-color: var(--ultra-rare); box-shadow: 0 0 15px rgba(168, 85, 247, 0.4); }
+    .badge-tile.unlocked.b-legendary { border-color: var(--legendary); box-shadow: 0 0 20px rgba(234, 179, 8, 0.5); }
+
+    /* Locked Dimmed Effect */
+    .badge-tile.locked {
+      opacity: 0.3;
+      filter: grayscale(100%);
+    }
+
+    .tile-name {
+      font-size: 0.9rem;
       font-weight: 600;
-      line-height: 1.15;
-      color: var(--text-muted);
-      word-break: break-word;
-      hyphens: auto;
-      max-width: 100%;
     }
 
-    /* Unlocked Illuminated Visual Effects */
-    .badge-item.unlocked .badge-symbol {
-      transform: scale(1.05);
-    }
-
-    .badge-item.unlocked .badge-name {
-      color: var(--text-primary);
+    .tile-rarity {
+      font-size: 0.7rem;
       font-weight: 700;
+      text-transform: uppercase;
+      padding: 0.15rem 0.4rem;
+      border-radius: 0.4rem;
+      color: #fff;
     }
 
-    .badge-item.unlocked.b-legendary .badge-symbol {
-      filter: drop-shadow(0 0 10px rgba(234, 179, 8, 0.9));
-      font-size: 2.2rem;
-    }
-
-    .badge-item.unlocked.b-ultra-rare .badge-symbol {
-      filter: drop-shadow(0 0 7px rgba(168, 85, 247, 0.85));
-    }
-
-    .badge-item.unlocked.b-rare .badge-symbol {
-      filter: drop-shadow(0 0 6px rgba(59, 130, 246, 0.85));
-    }
-
-    .badge-item.unlocked.b-common .badge-symbol {
-      filter: drop-shadow(0 0 5px rgba(148, 163, 184, 0.7));
-    }
-
-    /* Locked Grayscale Dimmed Visual Effects */
-    .badge-item.locked {
-      opacity: 0.25;
-      filter: grayscale(100%);
-    }
-
-    .badge-item.locked .badge-symbol {
-      filter: grayscale(100%);
-    }
+    .tag-common { background: var(--common); color: #000; }
+    .tag-rare { background: var(--rare); }
+    .tag-ultra-rare { background: var(--ultra-rare); }
+    .tag-legendary { background: var(--legendary); color: #000; }
   </style>
 </head>
 <body>
 
-  <!-- Navigation -->
+  <!-- Navigation Bar -->
   <nav class="navbar">
     <div class="nav-logo">Tracker Hub</div>
     <div class="nav-links">
@@ -388,47 +321,40 @@
     </div>
   </nav>
 
-  <main class="stats-container">
+  <main class="stats-grid">
 
-    <!-- Player Level & EXP Section -->
+    <!-- Player Level & EXP Progression -->
     <section class="level-card">
       <div class="level-header">
         <div>
-          <div class="level-title-label">Personal Rank</div>
+          <span style="font-size:0.85rem; color:var(--text-muted); text-transform:uppercase;">Personal Rank</span>
           <div class="level-badge" id="player-level">Level 1</div>
         </div>
-        <div class="exp-counter" id="exp-display">0 / 10 EXP</div>
+        <div class="exp-counter" id="exp-display">0 / 0 EXP (Total: 0)</div>
       </div>
       <div class="exp-bar-bg">
         <div class="exp-bar-fill" id="exp-bar"></div>
       </div>
     </section>
 
-    <!-- Mobile Metric Rows (2-Line Layout) -->
-    <section class="metrics-section">
-      <!-- Line 1: Total Catches & Encounters -->
-      <div class="metric-row">
-        <div class="metric-card">
-          <div class="metric-label">Total Catches</div>
-          <div class="metric-value" id="stat-catches">0</div>
-        </div>
-        <div class="metric-card">
-          <div class="metric-label">Total Encounters</div>
-          <div class="metric-value" id="stat-encounters">0</div>
-        </div>
+    <!-- Core Metrics Cards -->
+    <section class="metrics-row">
+      <div class="metric-card">
+        <div class="metric-label">Total Catches</div>
+        <div class="metric-value" id="stat-catches">0</div>
       </div>
-
-      <!-- Line 2: Avg Stars & Badges Count -->
-      <div class="metric-row">
-        <div class="metric-card">
-          <div class="metric-label">Avg Star Rating</div>
-          <div class="star-rating-display" id="star-rating-container">☆☆☆☆☆</div>
-          <div class="star-score-sub" id="star-score-text">0.0 / 4.0 Stars</div>
-        </div>
-        <div class="metric-card">
-          <div class="metric-label">Badges Count</div>
-          <div class="metric-value" id="stat-badge-count">0 / 13</div>
-        </div>
+      <div class="metric-card">
+        <div class="metric-label">Total Encounters</div>
+        <div class="metric-value" id="stat-encounters">0</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Average Star Rating</div>
+        <div class="star-rating-display" id="star-rating-container">☆☆☆☆☆</div>
+        <div class="star-score-sub" id="star-score-text">0.0 / 4.0 Stars</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Badges Collection</div>
+        <div class="metric-value" id="stat-badge-count">0 / 13</div>
       </div>
     </section>
 
@@ -455,27 +381,19 @@
       </div>
     </section>
 
-    <!-- Single Container Card Badge Gallery Grid -->
+    <!-- Badge Collection Gallery Grid -->
     <section class="gallery-card">
       <h3>Badge Collection Gallery</h3>
-      <div class="badge-collection-wrapper">
-        <!-- Legendary Badge Top Centered -->
-        <div class="top-legendary-slot" id="legendary-slot"></div>
-        
-        <!-- 6x2 Grid for 12 Remaining Badges -->
-        <div class="badge-grid-6x2" id="grid-6x2"></div>
-      </div>
+      <div class="badge-grid" id="badge-gallery"></div>
     </section>
 
   </main>
 
   <script>
-    // Config for 13 System Badges (1 Legendary, 4 Ultra-Rare, 4 Rare, 4 Common)
+    // System Badges List (1 Legendary, 4 Ultra-Rare, 4 Rare, 4 Common)
     const BADGES_CONFIG = [
-      // Top Slot Badge
       { name: "Apex Mastery 👑", rarity: "Legendary", exp: 20 },
       
-      // 12 Grid Badges
       { name: "Flawless Execution 💎", rarity: "Ultra-Rare", exp: 15 },
       { name: "MVP Contender 🌟", rarity: "Ultra-Rare", exp: 15 },
       { name: "Boss Slayer 🐉", rarity: "Ultra-Rare", exp: 15 },
@@ -492,16 +410,16 @@
       { name: "First Step 🐾", rarity: "Common", exp: 5 }
     ];
 
-    // Read characters roster from localStorage
+    // Load characters from local shared storage
     const characters = JSON.parse(localStorage.getItem('roster_characters_v5')) || [];
 
-    // Progressive Bracket Engine (Level 100 max = 10,000 EXP total)
+    // Progressive Bracket System calibrated so Level 100 = exactly 10,000 Cumulative EXP
     function getExpThresholdForLevel(lvl) {
       if (lvl <= 1) return 0;
       let cumulative = 0;
       for (let i = 1; i < lvl; i++) {
         const bracket = Math.floor((i - 1) / 10);
-        const expForNext = 10 + (bracket * 20); // Incremental brackets per 10 levels
+        const expForNext = 10 + (bracket * 20); // Increases every 10 levels
         cumulative += expForNext;
       }
       return cumulative;
@@ -551,13 +469,6 @@
       return starsHTML;
     }
 
-    function extractBadgeSymbolAndTitle(badgeFullName) {
-      const parts = badgeFullName.trim().split(' ');
-      const symbol = parts.pop();
-      const nameOnly = parts.join(' ');
-      return { symbol, nameOnly };
-    }
-
     function computeStats() {
       const unlockedBadges = new Set();
       let totalEncounters = 0;
@@ -566,45 +477,47 @@
       const hairCounts = { Blonde: 0, Dark: 0, Silver: 0, Red: 0 };
 
       const totalCatches = characters.length;
-      const avatarExp = totalCatches * 100; // 100 EXP per catch avatar
+      const avatarExp = totalCatches * 100;
 
       let badgeExp = 0;
       let ratingScoresSum = 0;
       const ratingMap = { 'Common': 1, 'Rare': 2, 'Ultra-Rare': 3, 'Legendary': 4 };
 
       characters.forEach(c => {
+        // Race breakdown
         if (raceCounts[c.race] !== undefined) raceCounts[c.race]++;
+        
+        // Hair breakdown
         if (hairCounts[c.hair] !== undefined) hairCounts[c.hair]++;
 
-        if (c.logs) {
-          totalEncounters += c.logs.length;
-          let highestRarityVal = 0;
+        totalEncounters += c.logs.length;
+        let highestRarityVal = 0;
 
-          c.logs.forEach(log => {
-            if (log.badges) {
-              log.badges.forEach(badgeName => {
-                unlockedBadges.add(badgeName);
-                const conf = BADGES_CONFIG.find(b => b.name === badgeName);
-                if (conf && ratingMap[conf.rarity] > highestRarityVal) {
-                  highestRarityVal = ratingMap[conf.rarity];
-                }
-              });
-            }
-          });
+        c.logs.forEach(log => {
+          if (log.badges) {
+            log.badges.forEach(badgeName => {
+              unlockedBadges.add(badgeName);
+              const conf = BADGES_CONFIG.find(b => b.name === badgeName);
+              if (conf && ratingMap[conf.rarity] > highestRarityVal) {
+                highestRarityVal = ratingMap[conf.rarity];
+              }
+            });
+          }
+        });
 
-          ratingScoresSum += highestRarityVal;
-        }
+        ratingScoresSum += highestRarityVal;
       });
 
-      // EXP calculation from unique unlocked badges
+      // Compute Badge EXP from unique unlocked badges
       unlockedBadges.forEach(bName => {
         const conf = BADGES_CONFIG.find(b => b.name === bName);
         if (conf) badgeExp += conf.exp;
       });
 
-      const encounterExp = totalEncounters * 5; // 5 EXP per encounter
+      const encounterExp = totalEncounters * 5;
       const totalExp = avatarExp + badgeExp + encounterExp;
 
+      // Average Star Calculation
       let avgStarScore = 0;
       if (totalCatches > 0) {
         avgStarScore = ratingScoresSum / totalCatches;
@@ -625,16 +538,16 @@
       const stats = computeStats();
       const levelData = calculateLevelData(stats.totalExp);
 
-      // Render Level & EXP Progress
+      // Render Level & EXP
       document.getElementById('player-level').textContent = `Level ${levelData.level}`;
       if (levelData.level >= 100) {
-        document.getElementById('exp-display').textContent = `10,000 / 10,000 EXP (MAX)`;
+        document.getElementById('exp-display').textContent = `10,000 / 10,000 EXP (MAX Level 100)`;
       } else {
-        document.getElementById('exp-display').textContent = `${levelData.progressInLevel} / ${levelData.reqForThisLevel} EXP`;
+        document.getElementById('exp-display').textContent = `${levelData.progressInLevel} / ${levelData.reqForThisLevel} EXP (Total: ${stats.totalExp})`;
       }
       document.getElementById('exp-bar').style.width = `${levelData.progressPercent}%`;
 
-      // Render Metrics
+      // Render Core Metrics
       document.getElementById('stat-catches').textContent = stats.totalCatches;
       document.getElementById('stat-encounters').textContent = stats.totalEncounters;
       document.getElementById('stat-badge-count').textContent = `${stats.unlockedBadges.size} / ${BADGES_CONFIG.length}`;
@@ -643,7 +556,7 @@
       document.getElementById('star-rating-container').textContent = generateStarString(stats.avgStarScore);
       document.getElementById('star-score-text').textContent = `${stats.avgStarScore.toFixed(1)} / 4.0 Avg Stars`;
 
-      // Render Race Breakdown Bar
+      // 1. Render Race Breakdown
       document.getElementById('cnt-human').textContent = stats.raceCounts.Human;
       document.getElementById('cnt-elf').textContent = stats.raceCounts.Elf;
       document.getElementById('cnt-cyborg').textContent = stats.raceCounts.Cyborg;
@@ -658,7 +571,7 @@
         `;
       }
 
-      // Render Hair Color Breakdown Bar
+      // 2. Render Hair Color Breakdown
       document.getElementById('cnt-blonde').textContent = stats.hairCounts.Blonde;
       document.getElementById('cnt-dark').textContent = stats.hairCounts.Dark;
       document.getElementById('cnt-silver').textContent = stats.hairCounts.Silver;
@@ -675,37 +588,29 @@
         `;
       }
 
-      // Render Single Card Badge Showcase
-      const legendarySlot = document.getElementById('legendary-slot');
-      const grid6x2 = document.getElementById('grid-6x2');
-      
-      legendarySlot.innerHTML = '';
-      grid6x2.innerHTML = '';
+      // Render Badge Gallery
+      const gallery = document.getElementById('badge-gallery');
+      gallery.innerHTML = '';
 
-      BADGES_CONFIG.forEach((badge, index) => {
+      BADGES_CONFIG.forEach(badge => {
         const isUnlocked = stats.unlockedBadges.has(badge.name);
         const rClass = getRarityClass(badge.rarity);
-        const { symbol, nameOnly } = extractBadgeSymbolAndTitle(badge.name);
-
-        const badgeElem = document.createElement('div');
-        badgeElem.className = `badge-item ${isUnlocked ? 'unlocked b-' + rClass : 'locked'}`;
         
-        badgeElem.innerHTML = `
-          <div class="badge-symbol">${symbol}</div>
-          <div class="badge-name">${nameOnly}</div>
+        const tile = document.createElement('div');
+        tile.className = `badge-tile ${isUnlocked ? 'unlocked b-' + rClass : 'locked'}`;
+        
+        tile.innerHTML = `
+          <div style="font-size: 1.8rem;">${badge.name.split(' ').pop()}</div>
+          <div class="tile-name">${badge.name.replace(/\s\S+$/, '')}</div>
+          <span class="tile-rarity tag-${rClass}">${badge.rarity}</span>
+          <small style="color:var(--text-muted); font-size:0.7rem;">+${badge.exp} EXP</small>
         `;
-
-        // Index 0 is Legendary (Top Centered), remaining 12 go into 6x2 grid
-        if (index === 0) {
-          legendarySlot.appendChild(badgeElem);
-        } else {
-          grid6x2.appendChild(badgeElem);
-        }
+        
+        gallery.appendChild(tile);
       });
     }
 
-    // Initialize application logic on page load
-    window.onload = renderPage;
+    renderPage();
   </script>
 </body>
 </html>
