@@ -16,6 +16,7 @@
       --text-primary: #f8fafc;
       --text-muted: #94a3b8;
       --border: #334155;
+      --star-color: #f59e0b;
       
       --common: #94a3b8;
       --rare: #3b82f6;
@@ -269,7 +270,7 @@
     .rating {
       font-size: 0.72rem;
       font-weight: 700;
-      margin-bottom: 0.4rem;
+      margin-bottom: 0.2rem;
       text-transform: uppercase;
     }
 
@@ -277,6 +278,13 @@
     .rating-rare { color: var(--rare); }
     .rating-ultra-rare { color: var(--ultra-rare); }
     .rating-legendary { color: var(--legendary); }
+
+    .star-display {
+      color: var(--star-color);
+      font-size: 0.75rem;
+      margin-bottom: 0.4rem;
+      letter-spacing: 1px;
+    }
 
     .evo-container {
       width: 100%;
@@ -489,6 +497,29 @@
       color: var(--text-muted);
     }
 
+    /* Interactive Star Rating Selector */
+    .star-input-group {
+      display: flex;
+      gap: 0.4rem;
+      margin-top: 0.2rem;
+    }
+
+    .star-input-btn {
+      background: var(--bg-dark);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      font-size: 1.2rem;
+      padding: 0.3rem 0.6rem;
+      border-radius: 0.4rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .star-input-btn.selected, .star-input-btn:hover {
+      color: var(--star-color);
+      border-color: var(--star-color);
+    }
+
     .checkbox-group {
       display: grid;
       grid-template-columns: repeat(1, 1fr);
@@ -554,10 +585,16 @@
     .log-item-header {
       display: flex;
       justify-content: space-between;
+      align-items: center;
       font-weight: 600;
       color: var(--accent);
       margin-bottom: 0.2rem;
       padding-right: 1.25rem;
+    }
+
+    .log-stars {
+      color: var(--star-color);
+      font-size: 0.8rem;
     }
 
     .delete-log-btn {
@@ -727,7 +764,7 @@
     </div>
   </div>
 
-  <!-- Add Encounter Modal -->
+  <!-- Add Encounter Modal (With Star Rating Selector) -->
   <div class="modal-overlay" id="encounter-modal-overlay">
     <div class="modal">
       <button class="close-btn" id="close-encounter-modal">&times;</button>
@@ -742,6 +779,20 @@
             <option value="Boss Raid">Boss Raid</option>
           </select>
         </div>
+
+        <!-- Star Rating Input -->
+        <div class="form-group">
+          <label>Encounter Star Rating</label>
+          <div class="star-input-group" id="star-input-group">
+            <button type="button" class="star-input-btn" data-star="1">★</button>
+            <button type="button" class="star-input-btn" data-star="2">★</button>
+            <button type="button" class="star-input-btn" data-star="3">★</button>
+            <button type="button" class="star-input-btn" data-star="4">★</button>
+            <button type="button" class="star-input-btn selected" data-star="5">★</button>
+          </div>
+          <input type="hidden" id="enc-stars" value="5">
+        </div>
+
         <div class="form-group">
           <label for="enc-date">Date</label>
           <input type="date" id="enc-date" required>
@@ -785,7 +836,7 @@
       { name: "First Step 🐾", rarity: "Common", rank: 1 }
     ];
 
-    let characters = JSON.parse(localStorage.getItem('roster_characters_v5')) || [
+    let characters = JSON.parse(localStorage.getItem('roster_characters_v6')) || [
       {
         id: "001",
         name: "Aria Shadow",
@@ -796,6 +847,7 @@
           { 
             id: "log-1", 
             type: "Boss Raid", 
+            stars: 5,
             date: "2026-03-12", 
             location: "Moonlit Citadel", 
             badges: ["Apex Mastery 👑", "MVP Contender 🌟"], 
@@ -807,6 +859,7 @@
 
     let currentView = 'grid';
     let selectedCharacterId = null;
+    let selectedStars = 5;
 
     const container = document.getElementById('roster-container');
     const totalLogsEl = document.getElementById('total-logs-count');
@@ -836,12 +889,23 @@
     const badgeCheckboxList = document.getElementById('badge-checkbox-list');
 
     function saveState() {
-      localStorage.setItem('roster_characters_v5', JSON.stringify(characters));
+      localStorage.setItem('roster_characters_v6', JSON.stringify(characters));
     }
 
     function updateTotalLogsHeader() {
       const total = characters.reduce((acc, c) => acc + c.logs.length, 0);
       totalLogsEl.textContent = total;
+    }
+
+    function getStarRatingString(stars) {
+      const count = Math.min(Math.max(parseInt(stars) || 5, 1), 5);
+      return '★'.repeat(count);
+    }
+
+    function calculateAverageStars(logs) {
+      if (!logs || logs.length === 0) return 0;
+      const totalStars = logs.reduce((acc, l) => acc + (parseInt(l.stars) || 5), 0);
+      return Math.round(totalStars / logs.length);
     }
 
     function calculateEncounterLevel(encounterCount) {
@@ -894,6 +958,26 @@
       });
     }
 
+    function setupStarInputs() {
+      const starBtns = document.querySelectorAll('.star-input-btn');
+      starBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const rating = parseInt(btn.getAttribute('data-star'));
+          selectedStars = rating;
+          document.getElementById('enc-stars').value = rating;
+
+          starBtns.forEach(b => {
+            const bRating = parseInt(b.getAttribute('data-star'));
+            if (bRating <= rating) {
+              b.classList.add('selected');
+            } else {
+              b.classList.remove('selected');
+            }
+          });
+        });
+      });
+    }
+
     function render() {
       const query = searchInput.value.toLowerCase();
       const race = raceFilter.value;
@@ -919,6 +1003,8 @@
         const levelInfo = calculateEncounterLevel(totalEncounters);
         const ratingInfo = calculateHighestRating(item.logs);
         const rClass = getRarityClass(ratingInfo.rarity);
+        const avgStars = calculateAverageStars(item.logs);
+        const starStr = getStarRatingString(avgStars || 5);
         
         const card = document.createElement('div');
         card.className = 'card';
@@ -931,6 +1017,7 @@
             </div>
             <div class="card-name">${item.name}</div>
             <div class="rating rating-${rClass}">${ratingInfo.rarity}</div>
+            <div class="star-display">${starStr}</div>
             <div class="evo-container">
               <div class="evo-header">
                 <span>Lvl ${levelInfo.level}</span>
@@ -950,6 +1037,7 @@
               <div>
                 <div class="card-name">${item.name}</div>
                 <div class="rating rating-${rClass}">${ratingInfo.rarity}</div>
+                <div class="star-display">${starStr}</div>
               </div>
             </div>
             <div class="list-meta">
@@ -976,6 +1064,7 @@
       const levelInfo = calculateEncounterLevel(totalEncounters);
       const ratingInfo = calculateHighestRating(item.logs);
       const rClass = getRarityClass(ratingInfo.rarity);
+      const avgStars = calculateAverageStars(item.logs);
 
       const earnedBadgesSet = new Set();
       item.logs.forEach(l => {
@@ -997,9 +1086,9 @@
           <button class="delete-log-btn" onclick="deleteEncounter('${l.id}')">&times;</button>
           <div class="log-item-header">
             <span>${l.type}</span>
-            <span>${l.date}</span>
+            <span class="log-stars">${getStarRatingString(l.stars || 5)}</span>
           </div>
-          <div><strong>Location:</strong> ${l.location}</div>
+          <div style="color:var(--text-muted); font-size:0.72rem; margin-bottom:0.2rem;">${l.date} &bull; ${l.location}</div>
           ${l.badges && l.badges.length ? `<div style="margin-top:0.2rem;">${l.badges.map(b => `<span class="character-badge" style="font-size:0.65rem;">${b}</span>`).join(' ')}</div>` : ''}
           ${l.notes ? `<div style="color:var(--text-muted); margin-top:0.2rem;">${l.notes}</div>` : ''}
         </div>
@@ -1016,7 +1105,8 @@
         </div>
 
         <h3 style="margin-top:0.2rem;">${item.name}</h3>
-        <div class="rating rating-${rClass}" style="font-size:0.85rem; margin-bottom:0.4rem;">Highest: ${ratingInfo.rarity}</div>
+        <div class="rating rating-${rClass}" style="font-size:0.85rem;">Highest Rarity: ${ratingInfo.rarity}</div>
+        <div class="star-display" style="font-size:0.95rem; margin-bottom:0.4rem;">${getStarRatingString(avgStars || 5)}</div>
 
         <div class="modal-stats">
           <div class="stat-row"><span>Race</span><strong>${item.race}</strong></div>
@@ -1086,6 +1176,9 @@
 
     window.openEncounterModal = function() {
       document.getElementById('enc-date').valueAsDate = new Date();
+      selectedStars = 5;
+      document.getElementById('enc-stars').value = 5;
+      document.querySelectorAll('.star-input-btn').forEach(b => b.classList.add('selected'));
       encounterOverlay.classList.add('active');
     };
 
@@ -1098,6 +1191,7 @@
         const newLog = {
           id: "log-" + Date.now(),
           type: document.getElementById('enc-type').value,
+          stars: parseInt(document.getElementById('enc-stars').value) || 5,
           date: document.getElementById('enc-date').value,
           location: document.getElementById('enc-location').value,
           badges: checkedBadges,
@@ -1159,6 +1253,7 @@
     editOverlay.addEventListener('click', (e) => { if (e.target === editOverlay) editOverlay.classList.remove('active'); });
     encounterOverlay.addEventListener('click', (e) => { if (e.target === encounterOverlay) encounterOverlay.classList.remove('active'); });
 
+    setupStarInputs();
     renderBadgeCheckboxes();
     render();
   </script>
